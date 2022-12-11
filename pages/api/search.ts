@@ -27,7 +27,7 @@ export function Search(query:string) : FoodListSearchResponse{
     return {message:(err as Object).toString(), status:"error"};
   }
 
-  let ret : FoodListSearchResponse = {status:"sucsess"};
+  let ret : FoodListSearchResponse = {status:"success"};
   ret.data = [];
   for(let d of data){
     for(let i in d.data){
@@ -46,7 +46,7 @@ export function Search(query:string) : FoodListSearchResponse{
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<FoodListSearchResponse>) {
   if(req.query["q"] == undefined || req.query["q"] == ""){
-    res.status(200).json({data:[], status:"sucsess"});
+    res.status(200).json({data:[], status:"success"});
     return;
   }
   if(typeof req.query["q"] != 'string'){
