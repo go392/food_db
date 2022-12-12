@@ -16,7 +16,7 @@ export const getStaticPaths = async () => {
   try{
     paths = fs.readdirSync("./jsondata", undefined);
     paths = paths.filter((value:string) => { return value != 'unit' && value != 'group'; });
-    ids = paths.map((value:string) => { return {params:{id:value}}});
+    ids = paths.map((value:string) => { return {params:{group:value.substring(0,2), id:value.substring(2)}}});
   }catch(err){
     console.log(err);
   }
@@ -27,16 +27,19 @@ export const getStaticPaths = async () => {
 }
 
 export const getStaticProps = async ({params}: GetStaticPropsContext) => {
+  if(params == undefined){
+    return {props: {links:[]}};
+  }
   let paths: string[] =[];
   try{
-    paths = fs.readdirSync(`./jsondata/${params.id}`, undefined);
+    paths = fs.readdirSync(`./jsondata/${params.group}${params.id}`, undefined);
   }catch(err){
     console.log(err);
   }
   let links:LinkInfo[] = [];
   paths.forEach((p:string) =>{
     let link: string = path.parse(p).name;
-    let href = `${params.id}/${link}`;
+    let href = `/${params.group}/${params.id}/${link}`;
     switch (link){
     case "nutrients":
       links.push({name:"栄養素",  href});
@@ -69,7 +72,7 @@ export const getStaticProps = async ({params}: GetStaticPropsContext) => {
 const Page: NextPage<Props> = (props : Props) => {
   return <div className="max-w-lg m-auto">{
     props.links.map((l:LinkInfo)=>
-      <Link className="block border border-gray-100 px-2 py-2 w-full" href={l.href}>{l.name}</Link>)}
+      <Link key={l.href} className="block border border-gray-100 px-2 py-2 w-full" href={l.href}>{l.name}</Link>)}
   </div>;
 };
 

@@ -1,46 +1,36 @@
 
 import { useRouter } from 'next/router'
-import { useState } from 'react';
-import { GetServerSideProps, GetServerSidePropsContext } from 'next';
-import { FoodList, FoodListSearchResponse, Search } from './api/search';
+import { useState, useEffect } from 'react';
+import { GetStaticProps, GetStaticPropsContext, NextPage } from 'next';
 import Link from 'next/link';
+import fs from 'fs';
 
 type Props = {
-  q: string,
-  data: FoodList[]
+    group:any[]
 }
 
-export const getServerSideProps: GetServerSideProps<Props> =  async ({query} : GetServerSidePropsContext) =>{
-  let q :string= query["q"] as string ?? "";
-  let data : FoodList[] = [];
-  if(q) {
-    let res :FoodListSearchResponse= Search(q);
-    if(res.data){
-      data = res.data;
-    }
+export const getStaticProps: GetStaticProps<Props> =  async (context : GetStaticPropsContext) =>{
+  let data :any[]=[];
+  try{
+    let list:string[] =  fs.readdirSync(`./jsondata/group`, undefined);
+    data = list.map((value:string)=>{
+      let d = fs.readFileSync(`./jsondata/group/${value}`, undefined);
+      return JSON.parse(d.toString());
+    })
+  }catch(e){
+    console.log(e);
   }
+  const group:any[] = data.map((v)=>{return{id:v.id, name:v.name}});
 
   return {props:{
-    q,
-    data
+    group
   }};
 }
 
-export default function Home(props: Props) {
-  const router = useRouter();
-  const [searchText, setSearchText] = useState(props.q);
-  const search = () =>{
-    router.push({pathname: '/', query:{q:searchText}});
-  }
-
+const Home: NextPage<Props> = (props: Props) => {
   return <div className='max-w-lg m-auto'>
-    <h1 className='text-2xl font-bold'>食品データベース</h1>
-    <div className='flex justify-center my-2'>
-    <input onChange={(event) => setSearchText(event.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 flex-1 px-2 py-2" type={"search"}/>
-    <button onClick={search} className="bg-gray-500 hover:bg-gray-400 text-white rounded flex-2 px-2 py-2">検索</button>
-    </div>
-    <div>{
-      props.data.map((f:FoodList)=><Link className='block border border-gray-100 px-2 py-2' href={f.id}>{f.name}</Link>)
-    }</div>
+    {props.group.map((o) => <Link href={o.id} key={o.name} className='block w-full border border-glay-100 px-2 py-2'>{o.name}</Link>)}
   </div>;
 }
+
+export default Home;

@@ -2,18 +2,20 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import fs from "fs";
 
-export  type FoodList = {
+type FoodList = {
   name: string,
   id: string,
 }
 
-export  type FoodListSearchResponse = {
+type FoodListSearchResponse = {
   data?:FoodList[],
   status: string,
   message?: string,
 };
 
-export function Search(query:string) : FoodListSearchResponse{
+function Search(query:string) : FoodListSearchResponse{
+  if(query == "") return {status:"success", data:[]}
+
   let search_words:string[];
   search_words = query.split(' ');
   let data: any[] = [];
@@ -45,14 +47,5 @@ export function Search(query:string) : FoodListSearchResponse{
 }
 
 export default function handler(req: NextApiRequest, res: NextApiResponse<FoodListSearchResponse>) {
-  if(req.query["q"] == undefined || req.query["q"] == ""){
-    res.status(200).json({data:[], status:"success"});
-    return;
-  }
-  if(typeof req.query["q"] != 'string'){
-    res.status(400).json({message:"Query parse failed", status:"fail"});
-    return;
-  }
-
   res.status(200).json(Search(req.query["q"] as string));
 }

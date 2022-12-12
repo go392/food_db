@@ -622,7 +622,7 @@ let food_list ={};
 try {
     fs.mkdirSync(`./jsondata/group`, {recursive:true})
     for(let i in food_list){
-        let obj ={data : food_list[i]};
+        let obj ={data : food_list[i], id:i};
         switch(i){
         case "01":
             obj.name = "穀類";

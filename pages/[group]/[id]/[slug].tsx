@@ -14,7 +14,7 @@ export const getStaticPaths = async () => {
         if(!dir) return;
         let files = fs.readdirSync(`./jsondata/${dir}`, undefined);
         files.forEach((file)=>{
-          ids.push({params: {id:dir, slug:path.parse(file).name}});
+          ids.push({params: {group:dir.substring(0,2), id:dir.substring(2), slug:path.parse(file).name}});
         })
     });
   }catch(err){
@@ -28,10 +28,13 @@ export const getStaticPaths = async () => {
 
 
 export const getStaticProps = async ({params}: GetStaticPropsContext) => {
-  let data: object={};
-  let unit: object={};
+  if(params == undefined){
+    return {props:{data:{}, unit:{}}};
+  }
+  let data: any={};
+  let unit: any={};
   try{
-    data = JSON.parse(fs.readFileSync(`./jsondata/${params.id}/${params.slug}.json`, undefined).toString());
+    data = JSON.parse(fs.readFileSync(`./jsondata/${params.group}${params.id}/${params.slug}.json`, undefined).toString());
     unit = JSON.parse(fs.readFileSync(`./jsondata/unit/${params.slug}.json`, undefined).toString());
   }catch(err){
     console.log(err);
@@ -46,8 +49,8 @@ export const getStaticProps = async ({params}: GetStaticPropsContext) => {
 
 const Page: NextPage<Props> = (props: Props) => {
   return <div className="max-w-lg m-auto"><table className="table-auto border-collapse border w-full"> <tbody>{
-    Object.entries(props.data).map(([key, value])=>
-    <tr><th className="border bg-gray-100">{key}</th><td className="border px-2 py-2">{value.raw + (props.unit[key] ? " " + props.unit[key].raw : "") }</td></tr>)
+    Object.entries(props.data).map(([key, value]: [string, any])=>
+    <tr key={key}><th className="border bg-gray-100">{key}</th><td className="border px-2 py-2">{value.raw + (props.unit[key] ? " " + props.unit[key].raw : "") }</td></tr>)
     }</tbody></table></div>
 };
 
