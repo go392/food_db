@@ -1,26 +1,19 @@
 
-import { useRouter } from 'next/router'
-import { useState, useEffect } from 'react';
 import { GetStaticProps, GetStaticPropsContext, NextPage } from 'next';
 import Link from 'next/link';
-import fs from 'fs';
+import { getFoodListFromGroup, getGroup } from '../utils/data';
+
+type GroupIndex = {
+  id:string,
+  name:string,
+}
 
 type Props = {
-    group:any[]
+    group:GroupIndex[]
 }
 
 export const getStaticProps: GetStaticProps<Props> =  async (context : GetStaticPropsContext) =>{
-  let data :any[]=[];
-  try{
-    let list:string[] =  fs.readdirSync(`./jsondata/group`, undefined);
-    data = list.map((value:string)=>{
-      let d = fs.readFileSync(`./jsondata/group/${value}`, undefined);
-      return JSON.parse(d.toString());
-    })
-  }catch(e){
-    console.log(e);
-  }
-  const group:any[] = data.map((v)=>{return{id:v.id, name:v.name}});
+  const group:GroupIndex[] = getGroup().map((v:string):GroupIndex => { return {id:v, name:getFoodListFromGroup(v).name} });
 
   return {props:{
     group

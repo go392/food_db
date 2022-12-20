@@ -9,7 +9,7 @@ type Props = {
 }
 
 export const getServerSideProps: GetServerSideProps<Props> =  async ({query} : GetServerSidePropsContext) =>{
-  let q :string= query["q"] as string ?? "";
+  let q :string= query["q"] as string;
 
   return {props:{
     q,
@@ -42,7 +42,7 @@ export default function Search(props: Props) {
     <button onClick={search} className="bg-gray-500 hover:bg-gray-400 text-white rounded flex-2 px-2 py-2">検索</button>
     </div>
     <div>{
-      searchResult.map((f:any)=><Link key={f.id} className='block border border-gray-100 px-2 py-2' href={f.id}>{f.name}</Link>)
+      searchResult.map((f:any)=><Link key={f.id} className='block border border-gray-100 px-2 py-2' href={`${f.id.substring(0,2)}/${f.id.substring(2)}`}>{f.name}</Link>)
     }</div>
   </div>;
 }

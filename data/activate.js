@@ -55,8 +55,13 @@ function toList(file, rows, units, beginrow, endcol){
                     sheet[adr].infos.push("trace");
                 }
             }
-            if(!isNaN(sheet[adr].v) && sheet[adr].w.includes("†")){
-                sheet[adr].infos.push("dagger");
+            if(!isNaN(sheet[adr].v)){
+                if(sheet[adr].w.includes("†")){
+                    sheet[adr].infos.push("dagger");
+                }
+                if(sheet[adr].w[0] == "0" || rows[c] == "索引番号"){
+                    sheet[adr].v = NaN;
+                }
             }
         }
     }

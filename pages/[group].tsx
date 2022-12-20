@@ -1,22 +1,15 @@
 
 import { GetStaticPathsContext, GetStaticPaths, GetStaticProps, GetStaticPropsContext, NextPage } from 'next';
 import Link from 'next/link';
-import fs from "fs";
-import path from 'path';
+import { getFoodListFromGroup, getGroup } from '../utils/data';
 
 type Props = {
     group:any
 }
 
 export const getStaticPaths : GetStaticPaths = async(context : GetStaticPathsContext) =>{
-  let paths: string[]=[];
-  let groups: any[]=[];
-  try{
-    paths = fs.readdirSync("./jsondata/group", undefined);
-    groups = paths.map((value:string) => { return {params:{ group:path.parse(value).name}}});
-  }catch(err){
-    console.log(err);
-  }
+  let paths= getGroup();
+  let groups = paths.map((value:string) => { return {params:{ group:value}}});
   return {
     paths:groups,
     fallback:false,
@@ -27,12 +20,7 @@ export const getStaticProps: GetStaticProps<Props> =  async ({params} : GetStati
   if(params == undefined){
     return {props:{group:[]}};
   }
-  let paths:any;
-  try{
-    paths = JSON.parse(fs.readFileSync(`./jsondata/group/${params.group}.json`, undefined).toString());
-  }catch(err){
-    console.log(err);
-  }
+  let paths = getFoodListFromGroup(params.group as string);
   return {
     props:{group:paths.data}
   };
