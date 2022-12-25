@@ -7,7 +7,7 @@ const SUB = "食品名";
 
 function write2JSON(list, filename){
     for (let i of list){
-        let primary = i[PRIMARY] ? i[PRIMARY].raw : "unit";
+        let primary = i[PRIMARY].raw != "" ? i[PRIMARY].raw : "unit";
         try {
             fs.mkdirSync(`./jsondata/${primary}/`, {recursive:true});
             fs.writeFileSync(`./jsondata/${primary}/${filename}.json`, JSON.stringify(i).toString(), 'utf8');
@@ -35,11 +35,17 @@ function toList(file, rows, units, beginrow, endcol){
     for (let r=beginrow; r<= ref.e.r; r++){
         for (let c=ref.s.c ; c <= ref.e.c ; c++) {
             let adr = utils.encode_cell({c:c, r:r});
-            if(!sheet[adr]) continue;
+            if(!sheet[adr]) {
+                continue;
+            }
+            if(sheet[adr].w == ""){
+                sheet[adr].v = NaN;
+                continue;
+            }
 
             sheet[adr].infos = [];
             let value = sheet[adr].w;
-            sheet[adr].v = parseFloat(sheet[adr].w)
+            sheet[adr].v = parseFloat(sheet[adr].w);
             
             if(isNaN(sheet[adr].v)){
                 if((new RegExp(/\(.+?\)/)).test(value)){ // "(x)"
@@ -59,7 +65,7 @@ function toList(file, rows, units, beginrow, endcol){
                 if(sheet[adr].w.includes("†")){
                     sheet[adr].infos.push("dagger");
                 }
-                if(sheet[adr].w[0] == "0" || rows[c] == "索引番号"){
+                if(rows[c] == "食品群" || rows[c] == "食品番号" || rows[c] == "索引番号"){
                     sheet[adr].v = NaN;
                 }
             }
@@ -72,12 +78,12 @@ function toList(file, rows, units, beginrow, endcol){
         let d ={};
         for (let c=ref.s.c ; c <= ref.e.c ; c++) {
             let adr = utils.encode_cell({c:c, r:r});
-            if (sheet[adr] && sheet[adr].w != ""){
+            if (sheet[adr] && (r == ref.s.r+1 ||sheet[adr].w != "")){
                 d[rows[c]] = {raw:sheet[adr].w};
-                if(!isNaN(sheet[adr].v)){
+                if(!isNaN(sheet[adr].v) && sheet[adr].v != ""){
                     d[rows[c]].number = sheet[adr].v;
                 }
-                if(sheet[adr].length!= 0){
+                if(sheet[adr].infos && sheet[adr].infos.length != 0){
                     d[rows[c]].infos = sheet[adr].infos;
                 }
             }
@@ -252,7 +258,7 @@ let food_list ={};
         "",
     ]
 
-    let list = toList("data/栄養素.xlsx", rows, units, 12, utils.decode_col("BJ"));
+    let list = toList("data/栄養素.xlsx", rows, units, 12, utils.decode_col("BI"));
     write2JSON(list, "nutrients");
     add2List(food_list, list);
 }
