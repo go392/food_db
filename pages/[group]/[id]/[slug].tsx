@@ -1,5 +1,5 @@
 import { InferGetStaticPropsType, GetStaticPropsContext,NextPage } from 'next'
-import { FoodValue, getAllFoodList, getFoodData, getFoodTables } from "../../../utils/data";
+import { FoodData, FoodValue, getAllFoodList, getFoodData, getFoodTables } from "../../../utils/data";
 import { useState } from 'react';
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>;
@@ -25,8 +25,8 @@ export const getStaticProps = async ({params}: GetStaticPropsContext) => {
   if(params == undefined){
     return {props:{data:{}, unit:{}}};
   }
-  let data = getFoodData(`${params.group}${params.id}`, `${params.slug}`);
-  let unit = getFoodData("unit", `${params.slug}`);
+  let data = getFoodData(`${params.group}${params.id}`, `${params.slug}`) as FoodData;
+  let unit = getFoodData("unit", `${params.slug}`) as FoodData;
   
   return {
     props: {

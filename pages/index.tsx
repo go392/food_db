@@ -1,7 +1,7 @@
 
 import { GetStaticProps, GetStaticPropsContext, NextPage } from 'next';
 import Link from 'next/link';
-import { getFoodListFromGroup, getGroup } from '../utils/data';
+import { getFoodTable, getFoodListFromGroup, getGroup } from '../utils/data';
 
 type GroupIndex = {
   id:string,
@@ -14,7 +14,6 @@ type Props = {
 
 export const getStaticProps: GetStaticProps<Props> =  async (context : GetStaticPropsContext) =>{
   const group:GroupIndex[] = getGroup().map((v:string):GroupIndex => { return {id:v, name:getFoodListFromGroup(v).name} });
-
   return {props:{
     group
   }};
