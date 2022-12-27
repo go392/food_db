@@ -1,4 +1,4 @@
-export const nutrients_units =[
+module.exports.nutrients_units =[
     "",
     "",
     "",
@@ -62,7 +62,7 @@ export const nutrients_units =[
     "",
 ];
 
-export const amino_acid_units =[
+module.exports.amino_acid_units =[
     "",
     "",
     "",
@@ -97,7 +97,7 @@ export const amino_acid_units =[
     "",
 ];
 
-export const fatty_acid_units=[
+module.exports.fatty_acid_units=[
     "",
     "",
     "",
@@ -163,7 +163,7 @@ export const fatty_acid_units=[
     "",
 ];
 
-export const carbohydrate_units=[
+module.exports.carbohydrate_units=[
     "",
     "",
     "",
@@ -184,7 +184,7 @@ export const carbohydrate_units=[
     "",
 ];
 
-export const fiber_units=[
+module.exports.fiber_units=[
     "",
     "",
     "",
@@ -201,7 +201,7 @@ export const fiber_units=[
     "",
 ];
 
-export const organic_acid_units=[
+module.exports.organic_acid_units=[
     "",
     "",
     "",

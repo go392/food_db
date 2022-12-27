@@ -1,4 +1,4 @@
-export const nutrients_rows = [
+module.exports.nutrients_rows = [
     "食品群",
     "食品番号",
     "索引番号",
@@ -62,7 +62,7 @@ export const nutrients_rows = [
     "栄養素備考"
 ];
 
-export const amino_acid_rows =rows = [
+module.exports.amino_acid_rows =rows = [
     "食品群",
     "食品番号",
     "索引番号",
@@ -97,7 +97,7 @@ export const amino_acid_rows =rows = [
     "アミノ酸備考"
 ];
 
-export const fatty_acid_rows = [
+module.exports.fatty_acid_rows = [
     "食品群",
     "食品番号",
     "索引番号",
@@ -163,7 +163,7 @@ export const fatty_acid_rows = [
     "脂肪酸備考"
 ];
 
-export const carbohydrate_rows =  [
+module.exports.carbohydrate_rows =  [
     "食品群",
     "食品番号",
     "索引番号",
@@ -184,7 +184,7 @@ export const carbohydrate_rows =  [
     "炭水化物備考"
 ];
 
-export const fiber_rows =[
+module.exports.fiber_rows =[
     "食品群",
     "食品番号",
     "索引番号",
@@ -201,7 +201,7 @@ export const fiber_rows =[
     "食物繊維備考"
 ];
 
-export const organic_acid_rows = [
+module.exports.organic_acid_rows = [
     "食品群",
     "食品番号",
     "索引番号",

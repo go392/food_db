@@ -1,8 +1,8 @@
 let xlsx = require('xlsx');
 const fs = require('fs');
-const r = require("./rows.js");
-const u = require("./units.js");
-const g = require("./group.js")
+const r = require("./rows");
+const u = require("./units");
+const g = require("./group")
 let utils = xlsx.utils;
 
 const PRIMARY = "食品番号";
@@ -55,9 +55,7 @@ function toList(file, rows, units, beginrow, endcol){
                     value = value.replace("(", "").replace(")", "");
                     sheet[adr].infos.push("estimate");
                     let removebrac = parseFloat(value);
-                    if(removebrac != NaN){
-                        sheet[adr].v = removebrac;
-                    }
+                    sheet[adr].v = removebrac;
                 }
                 if(value == "Tr"){
                     sheet[adr].v = 0;
@@ -83,7 +81,7 @@ function toList(file, rows, units, beginrow, endcol){
             let adr = utils.encode_cell({c:c, r:r});
             if (sheet[adr] && (r == ref.s.r+1 ||sheet[adr].w != "")){
                 d[rows[c]] = {raw:sheet[adr].w};
-                if(!isNaN(sheet[adr].v) && sheet[adr].v != ""){
+                if(!isNaN(sheet[adr].v) && sheet[adr].v !== ""){
                     d[rows[c]].number = sheet[adr].v;
                 }
                 if(sheet[adr].infos && sheet[adr].infos.length != 0){
