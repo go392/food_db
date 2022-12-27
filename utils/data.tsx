@@ -162,21 +162,27 @@ export function getFoodTable(group:number, table:number):FoodTable{
   });
 }
 
-export function filterFoodTable(ft :FoodTable, table:string, filter:bigint):FoodTable{
-  let ret :FoodTable = [];
-  for(let i of ft){
-    let d = {id: i.id, data: {...i.data}};
-    for(let j in d.data){
-      if(j != table) continue;
-      d.data[j] = { ...d.data[j] };
-      const r = rows[(j + "_rows") as keyof typeof rows];
-      for(let k=0; k< r.length; k++){
-        if( r[k] in d.data[j] && !(filter & (BigInt(1)<<BigInt(k)))){
-          delete d.data[j][k];
+export const FoodTableFunc={
+  extract:(ft :FoodTable, table:string, filter:bigint):FoodTable=>{
+    let ret :FoodTable = [];
+    for(let i of ft){
+      let d = {id: i.id, data: {...i.data}};
+      for(let j in d.data){
+        if(j != table) {
+          delete d.data[j];
+          continue;
+        }
+        d.data[j] = { ...d.data[j] };
+        const r = rows[(j + "_rows") as keyof typeof rows];
+        for(let k=0; k< r.length; k++){
+          if( r[k] in d.data[j] && !(filter & (BigInt(1)<<BigInt(k)))){
+            delete d.data[j][r[k]];
+          }
         }
       }
+      ret.push(d);
     }
-    ret.push(d);
-  }
-  return ret;
-}
+    return ret;
+  },
+};
+

@@ -1,7 +1,7 @@
 
 import { GetStaticProps, GetStaticPropsContext, NextPage } from 'next';
 import Link from 'next/link';
-import { getFoodTable, getFoodListFromGroup, getGroup } from '../utils/data';
+import { getFoodTable, getFoodListFromGroup, getGroup, filterFoodTable, FoodTableFunc } from '../utils/data';
 
 type GroupIndex = {
   id:string,
@@ -14,6 +14,9 @@ type Props = {
 
 export const getStaticProps: GetStaticProps<Props> =  async (context : GetStaticPropsContext) =>{
   const group:GroupIndex[] = getGroup().map((v:string):GroupIndex => { return {id:v, name:getFoodListFromGroup(v).name} });
+  const a = getFoodTable(0x1, 0x3f);
+  const b = FoodTableFunc.extract(a, "nutrients", BigInt(0xff))[0];
+  console.log(a[0], b);
   return {props:{
     group
   }};
