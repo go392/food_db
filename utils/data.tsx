@@ -1,5 +1,6 @@
 import fs, { existsSync } from 'fs';
 import path from 'path';
+import rows from '../data/rows';
 
 export function getGroup() : string[]{
     let paths: string[]=[];
@@ -102,24 +103,6 @@ export function tableMask(f:string): number{
     return 0;
 }
 
-export function table2Name(f:string):string | null{
-    switch (f){
-    case "nutrients":
-        return "栄養素";
-    case "amino_acid":
-        return "アミノ酸";
-    case "fatty_acid":
-        return "脂肪酸";
-    case "carbohydrate":
-        return "炭水化物";
-    case "organic_acid":
-        return "有機酸";
-    case "fiber":
-        return "食物繊維";
-    }
-    return null;
-}
-
 export function getAllFoodItems(): Record<string, string[]> {
   let items :Record<string, string[]> = {
     "栄養素": Object.entries(getFoodData("unit", "nutrients") as FoodData).map(([k, v]: [string, FoodValue])=>k),
@@ -177,4 +160,23 @@ export function getFoodTable(group:number, table:number):FoodTable{
   return Object.entries(ret).map(([k,v]:[string, Record<string, FoodData>])=>{
     return {id:k, data:v}
   });
+}
+
+export function filterFoodTable(ft :FoodTable, table:string, filter:bigint):FoodTable{
+  let ret :FoodTable = [];
+  for(let i of ft){
+    let d = {id: i.id, data: {...i.data}};
+    for(let j in d.data){
+      if(j != table) continue;
+      d.data[j] = { ...d.data[j] };
+      const r = rows[(j + "_rows") as keyof typeof rows];
+      for(let k=0; k< r.length; k++){
+        if( r[k] in d.data[j] && !(filter & (BigInt(1)<<BigInt(k)))){
+          delete d.data[j][k];
+        }
+      }
+    }
+    ret.push(d);
+  }
+  return ret;
 }

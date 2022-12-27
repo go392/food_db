@@ -62,7 +62,7 @@ module.exports.nutrients_rows = [
     "栄養素備考"
 ];
 
-module.exports.amino_acid_rows =rows = [
+module.exports.amino_acid_rows  = [
     "食品群",
     "食品番号",
     "索引番号",

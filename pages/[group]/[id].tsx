@@ -1,6 +1,7 @@
 import { InferGetStaticPropsType, GetStaticPropsContext, NextPage } from 'next'
 import Link from "next/link";
-import { getAllFoodList, getFoodTables, table2Name } from "../../utils/data";
+import { getAllFoodList, getFoodTables } from "../../utils/data";
+import { table_name } from "../../data/table";
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>;
 type LinkInfo={
@@ -26,7 +27,7 @@ export const getStaticProps = async ({params}: GetStaticPropsContext) => {
   let links:LinkInfo[] = [];
   paths.forEach((p:string) =>{
     let href = `/${params.group}/${params.id}/${p}`;
-    let name= table2Name(p) as string;
+    let name= table_name[p as keyof typeof table_name] as string;
     links.push({name, href});
   })
 
