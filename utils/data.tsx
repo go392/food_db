@@ -19,16 +19,17 @@ export type FoodIndex = {
 }
 
 export type FoodGroup = {
+    id:string,
     name: string;
     data: Record<string, FoodIndex>;
 }
 
 export function getFoodListFromGroup(g:string):FoodGroup{
-    let group:FoodGroup ={name:"", data:{}};
+    let group:FoodGroup ={id:g, name:"", data:{}};
   try{
     let pa = `./jsondata/group/${g}.json`;
     if(!fs.existsSync(pa)){
-      return {name:"", data:{} };
+      return {id: g, name:"", data:{} };
     }
     group = JSON.parse(fs.readFileSync(pa, undefined).toString());
   }catch(err){

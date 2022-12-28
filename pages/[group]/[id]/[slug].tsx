@@ -1,6 +1,9 @@
 import { InferGetStaticPropsType, GetStaticPropsContext,NextPage } from 'next'
-import { FoodData, FoodValue, getAllFoodList, getFoodData, getFoodTables } from "../../../utils/data";
+import { FoodData, FoodValue, getAllFoodList, getFoodData, getFoodListFromGroup, getFoodTables } from "../../../utils/data";
 import { useState } from 'react';
+import BreadcrumbsList, { BreadcrumbsElement } from '../../../components/breadcrumbslist';
+import { BreadcrumbsID } from '../[id]';
+import { table_name } from '../../../data/table';
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>;
 
@@ -23,15 +26,23 @@ export const getStaticPaths = async () => {
 
 export const getStaticProps = async ({params}: GetStaticPropsContext) => {
   if(params == undefined){
-    return {props:{data:{}, unit:{}}};
+    return {props:{data:{}, unit:{}, name:"", id:"", groupname:"", table:""}};
   }
-  let data = getFoodData(`${params.group}${params.id}`, `${params.slug}`) as FoodData;
-  let unit = getFoodData("unit", `${params.slug}`) as FoodData;
+  const info =  getFoodListFromGroup(params.group as string);
+  const groupname =info.name;
+  const id = `${params.group}${params.id}`;
+  const name = info.data[id].name;
+  const data = getFoodData(`${params.group}${params.id}`, `${params.slug}`) as FoodData;
+  const unit = getFoodData("unit", `${params.slug}`) as FoodData;
   
   return {
     props: {
+      groupname,
+      id, 
+      name,
       data,
       unit,
+      table:params.slug as string,
     }
   }
 }
@@ -48,10 +59,16 @@ function getValueString(gram:number, prop:FoodValue, unit?:FoodValue) : string{
   return (prop.number * gram / 100.0).toString() + unitstring;
 }
 
+export const BreadcrumbsTable = (groupname:string, id:string, foodname:string, table:string): BreadcrumbsElement[] =>{
+  return [ ...BreadcrumbsID(groupname, id, foodname), {href:`/${id.substring(0,2)}/${id.substring(2)}/${table}`, show: table_name[table as keyof typeof table_name]} ];
+}
+
 const Page: NextPage<Props> = (props: Props) => {
   const [gram, setGram] = useState(100);
 
   return <div className="max-w-lg m-auto">
+    <h1 className='text-2xl font-bold'>{props.name}</h1>
+  <BreadcrumbsList list={BreadcrumbsTable(props.groupname, props.id, props.name, props.table)}/>
     <input value={gram} type="number" onChange={(e)=>setGram(parseFloat(e.target.value))} className=" border bg-gray-100 w-full px-2 py-2" />
     <table className="table-auto border-collapse border w-full"> <tbody>{
     Object.entries(props.data).map(([key, value]: [string, any])=>

@@ -1,7 +1,8 @@
 
 import { GetStaticProps, GetStaticPropsContext, NextPage } from 'next';
 import Link from 'next/link';
-import { getFoodTable, getFoodListFromGroup, getGroup, filterFoodTable, FoodTableFunc } from '../utils/data';
+import BreadcrumbsList , { BreadcrumbsElement } from '../components/breadcrumbslist';
+import {getFoodListFromGroup, getGroup } from '../utils/data';
 
 type GroupIndex = {
   id:string,
@@ -14,16 +15,19 @@ type Props = {
 
 export const getStaticProps: GetStaticProps<Props> =  async (context : GetStaticPropsContext) =>{
   const group:GroupIndex[] = getGroup().map((v:string):GroupIndex => { return {id:v, name:getFoodListFromGroup(v).name} });
-  const a = getFoodTable(0x1, 0x3f);
-  const b = FoodTableFunc.extract(a, "nutrients", BigInt(0xff))[0];
-  console.log(a[0], b);
   return {props:{
     group
   }};
 }
 
+export const BreadcrumbsHome = () : BreadcrumbsElement[] =>{
+  return [{href:"/", show:"ホーム"}];
+}
+
 const Home: NextPage<Props> = (props: Props) => {
   return <div className='max-w-lg m-auto'>
+     <h1 className='text-2xl font-bold'>食品データベース</h1>
+    <BreadcrumbsList list={BreadcrumbsHome()} />
     {props.group.map((o) => <Link href={o.id} key={o.name} className='block w-full border border-glay-100 px-2 py-2'>{o.name}</Link>)}
   </div>;
 }

@@ -1,7 +1,9 @@
 import { InferGetStaticPropsType, GetStaticPropsContext, NextPage } from 'next'
 import Link from "next/link";
-import { getAllFoodList, getFoodTables } from "../../utils/data";
+import { FoodData, getAllFoodList, getFoodData, getFoodListFromGroup, getFoodTables, getGroup } from "../../utils/data";
 import { table_name } from "../../data/table";
+import { BreadcrumbsGroup } from '../[group]';
+import BreadcrumbsList, { BreadcrumbsElement } from '../../components/breadcrumbslist';
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>;
 type LinkInfo={
@@ -21,26 +23,38 @@ export const getStaticPaths = async () => {
 
 export const getStaticProps = async ({params}: GetStaticPropsContext) => {
   if(params == undefined){
-    return {props: {links:[]}};
+    return {props: {links:[], id:"", name:"", groupname:""}};
   }
-  let paths = getFoodTables(`${params.group}${params.id}`);
+  const info = getFoodListFromGroup(params.group as string);
+  const groupname =info.name;
+  const id = `${params.group}${params.id}`;
+  const name = info.data[id].name;
+  let paths = getFoodTables(id);
   let links:LinkInfo[] = [];
   paths.forEach((p:string) =>{
     let href = `/${params.group}/${params.id}/${p}`;
     let name= table_name[p as keyof typeof table_name] as string;
     links.push({name, href});
   })
-
   return {
     props: {
-      links
+      links,
+      id,
+      name,
+      groupname
     }
   }
 }
 
+export const BreadcrumbsID= (groupname:string, id:string, foodname:string): BreadcrumbsElement[] =>{
+  return [...BreadcrumbsGroup(id.substring(0,2), groupname), {href:`/${id.substring(0,2)}/${id.substring(2)}`, show:foodname}];
+}
+
 const Page: NextPage<Props> = (props : Props) => {
-  return <div className="max-w-lg m-auto">{
-    props.links.map((l:LinkInfo)=>
+  return <div className="max-w-lg m-auto">
+    <h1 className='text-2xl font-bold'>{props.name}</h1>
+    <BreadcrumbsList list={BreadcrumbsID(props.groupname, props.id, props.name)} />
+    {props.links.map((l:LinkInfo)=>
       <Link key={l.href} className="block border border-gray-100 px-2 py-2 w-full" href={l.href}>{l.name}</Link>)}
   </div>;
 };
