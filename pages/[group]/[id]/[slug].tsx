@@ -1,5 +1,5 @@
 import { InferGetStaticPropsType, GetStaticPropsContext,NextPage } from 'next'
-import { FoodData, FoodValue, getAllFoodList, getFoodData, getFoodListFromGroup, getFoodTables } from "../../../utils/data";
+import { FoodTable, FoodValue, getAllFoodList, getFoodListFromGroup, getFoodTable, getFoodTableList } from "../../../utils/data";
 import { useState } from 'react';
 import BreadcrumbsList, { BreadcrumbsElement } from '../../../components/breadcrumbslist';
 import { BreadcrumbsID } from '../[id]';
@@ -11,7 +11,7 @@ export const getStaticPaths = async () => {
   let paths = getAllFoodList();
   let ids: any[]=[];
   paths.forEach((v:string) => {
-    let tables = getFoodTables(v);
+    let tables = getFoodTableList(v);
     tables.forEach((t:string) => {
       ids.push({params:{group:v.substring(0,2), id:v.substring(2), slug:t}});
     });
@@ -32,8 +32,8 @@ export const getStaticProps = async ({params}: GetStaticPropsContext) => {
   const groupname =info.name;
   const id = `${params.group}${params.id}`;
   const name = info.data[id].name;
-  const data = getFoodData(`${params.group}${params.id}`, `${params.slug}`) as FoodData;
-  const unit = getFoodData("unit", `${params.slug}`) as FoodData;
+  const data = getFoodTable(`${params.group}${params.id}`, `${params.slug}`) as FoodTable;
+  const unit = getFoodTable("unit", `${params.slug}`) as FoodTable;
   
   return {
     props: {
@@ -53,7 +53,7 @@ function getValueString(gram:number, prop:FoodValue, unit?:FoodValue) : string{
   if(gram == 100.0){
     return prop.raw + unitstring;
   } 
-  if(isNaN(prop.number)) {
+  if(!prop.number || isNaN(prop.number)) {
     return prop.raw + unitstring;
   }
   return (prop.number * gram / 100.0).toString() + unitstring;
@@ -70,9 +70,8 @@ const Page: NextPage<Props> = (props: Props) => {
     <h1 className='text-2xl font-bold'>{props.name}</h1>
   <BreadcrumbsList list={BreadcrumbsTable(props.groupname, props.id, props.name, props.table)}/>
     <input value={gram} type="number" onChange={(e)=>setGram(parseFloat(e.target.value))} className=" border bg-gray-100 w-full px-2 py-2" />
-    <table className="table-auto border-collapse border w-full"> <tbody>{
-    Object.entries(props.data).map(([key, value]: [string, any])=>
-    <tr key={key}><th className="border bg-gray-100">{key}</th><td className="border px-2 py-2">{getValueString(gram, value as FoodValue, props.unit[key])}</td></tr>)
+    <table className="table-auto border-collapse border w-full"><tbody>{
+      Object.entries(props.data).map(([key, value]: [string, any])=><tr key={key}><th className="border bg-gray-100">{key}</th><td className="border px-2 py-2">{getValueString(gram, value as FoodValue, props.unit[key])}</td></tr>)
     }</tbody></table></div>
 };
 

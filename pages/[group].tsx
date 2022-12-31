@@ -3,7 +3,7 @@ import { GetStaticPathsContext, GetStaticPaths, GetStaticProps, GetStaticPropsCo
 import Link from 'next/link';
 import BreadcrumbsList, {BreadcrumbsElement} from '../components/breadcrumbslist';
 import { BreadcrumbsHome } from "./index";
-import { FoodGroup, getFoodListFromGroup, getGroup } from '../utils/data';
+import { getFoodListFromGroup, getGroup } from '../utils/data';
 
 type Props = {
     group:any

@@ -1,6 +1,6 @@
 import { InferGetStaticPropsType, GetStaticPropsContext, NextPage } from 'next'
 import Link from "next/link";
-import { FoodData, getAllFoodList, getFoodData, getFoodListFromGroup, getFoodTables, getGroup } from "../../utils/data";
+import { FoodTable, getAllFoodList, getFoodData, getFoodListFromGroup, getFoodTableList, getGroup } from "../../utils/data";
 import { table_name } from "../../data/table";
 import { BreadcrumbsGroup } from '../[group]';
 import BreadcrumbsList, { BreadcrumbsElement } from '../../components/breadcrumbslist';
@@ -29,7 +29,7 @@ export const getStaticProps = async ({params}: GetStaticPropsContext) => {
   const groupname =info.name;
   const id = `${params.group}${params.id}`;
   const name = info.data[id].name;
-  let paths = getFoodTables(id);
+  let paths = getFoodTableList(id);
   let links:LinkInfo[] = [];
   paths.forEach((p:string) =>{
     let href = `/${params.group}/${params.id}/${p}`;

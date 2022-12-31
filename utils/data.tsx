@@ -49,7 +49,7 @@ export function getAllFoodList():string[]{
   return paths;
 }
 
-export function getFoodTables(f:string):string[]{
+export function getFoodTableList(f:string):string[]{
     let paths: string[]=[];
     try{
       let pa =`./jsondata/${f}`;
@@ -66,14 +66,14 @@ export function getFoodTables(f:string):string[]{
 
 export type FoodValue ={
     raw:string;
-    number:number;
+    number?:number;
     infos?:string[];
 }
 
-export type FoodData = Record<string, FoodValue>;
+export type FoodTable = Record<string, FoodValue>;
 
-export function getFoodData(id:string, t:string) : FoodData | undefined{
-    let data: FoodData = {};
+export function getFoodTable(id:string, t:string) : FoodTable | undefined{
+    let data: FoodTable = {};
     try{
       let pa = `./jsondata/${id}/${t}.json`;
       if(!fs.existsSync(pa)){
@@ -106,25 +106,25 @@ export function tableMask(f:string): number{
 
 export function getAllFoodItems(): Record<string, string[]> {
   let items :Record<string, string[]> = {
-    "栄養素": Object.entries(getFoodData("unit", "nutrients") as FoodData).map(([k, v]: [string, FoodValue])=>k),
-    "アミノ酸":Object.entries(getFoodData("unit", "amino_acid") as FoodData).map(([k, v]: [string, FoodValue])=>k),
-    "脂肪酸":Object.entries(getFoodData("unit", "fatty_acid") as FoodData).map(([k, v]: [string, FoodValue])=>k),
-    "炭水化物":Object.entries(getFoodData("unit", "carbohydrate") as FoodData).map(([k, v]: [string, FoodValue])=>k),
-    "有機酸":Object.entries(getFoodData("unit", "organic_acid") as FoodData).map(([k, v]: [string, FoodValue])=>k),
-    "食物繊維":Object.entries(getFoodData("unit", "fiber") as FoodData).map(([k, v]: [string, FoodValue])=>k),
+    "栄養素": Object.entries(getFoodTable("unit", "nutrients") as FoodTable).map(([k, v]: [string, FoodValue])=>k),
+    "アミノ酸":Object.entries(getFoodTable("unit", "amino_acid") as FoodTable).map(([k, v]: [string, FoodValue])=>k),
+    "脂肪酸":Object.entries(getFoodTable("unit", "fatty_acid") as FoodTable).map(([k, v]: [string, FoodValue])=>k),
+    "炭水化物":Object.entries(getFoodTable("unit", "carbohydrate") as FoodTable).map(([k, v]: [string, FoodValue])=>k),
+    "有機酸":Object.entries(getFoodTable("unit", "organic_acid") as FoodTable).map(([k, v]: [string, FoodValue])=>k),
+    "食物繊維":Object.entries(getFoodTable("unit", "fiber") as FoodTable).map(([k, v]: [string, FoodValue])=>k),
   };
 
   return items;
 }
 
 
-type FoodTable = {
+type FoodData = {
   id: string,
-  data:Record<string, FoodData>,
-}[];
+  data:Record<string, FoodTable>,
+};
 
 
-export function getFoodTable(group:number, table:number):FoodTable{
+export function getFoodData(group:number, table:number):FoodData[]{
   let list : FoodGroup[] = [];
   for (let i = 0; i<18; i++){
     if(group & (1<<i)){
@@ -132,7 +132,7 @@ export function getFoodTable(group:number, table:number):FoodTable{
       list.push(getFoodListFromGroup(g));
     }
   }
-  let ret :Record<string, Record<string, FoodData>> = {};
+  let ret :Record<string, Record<string, FoodTable>> = {};
   for(let i in list){
     for(let j in list[i].data){
       ret[j] = {};
@@ -143,7 +143,7 @@ export function getFoodTable(group:number, table:number):FoodTable{
     if(table & tableMask(t)){
       for(let i in list){
         for(let j in list[i].data){
-          let f =  getFoodData(j, t);
+          let f =  getFoodTable(j, t);
           if(f){
             ret[j][t] =f;
           }
@@ -158,32 +158,104 @@ export function getFoodTable(group:number, table:number):FoodTable{
   func("organic_acid");
   func("fiber");
 
-  return Object.entries(ret).map(([k,v]:[string, Record<string, FoodData>])=>{
+  return Object.entries(ret).map(([k,v]:[string, Record<string, FoodTable>])=>{
     return {id:k, data:v}
   });
 }
 
-export const FoodTableFunc={
-  extract:(ft :FoodTable, table:string, filter:bigint):FoodTable=>{
-    let ret :FoodTable = [];
-    for(let i of ft){
-      let d = {id: i.id, data: {...i.data}};
-      for(let j in d.data){
-        if(j != table) {
-          delete d.data[j];
-          continue;
-        }
-        d.data[j] = { ...d.data[j] };
-        const r = rows[(j + "_rows") as keyof typeof rows];
-        for(let k=0; k< r.length; k++){
-          if( r[k] in d.data[j] && !(filter & (BigInt(1)<<BigInt(k)))){
-            delete d.data[j][r[k]];
-          }
-        }
+export namespace FoodDataFunc{
+  export function arrayExec(fd:FoodData[], func: (f:FoodData, ...a:any)=>FoodData, args:Array<any>|Record<string, any>):FoodData[]{
+    let ret :FoodData[] = [];
+    for(let i of fd){
+      const a = Array.isArray(args) ? args : args[i.id];
+      if(a == undefined) continue;
+      if(Array.isArray(a)){
+        ret.push(func(i, ...a));
+      } else {
+        ret.push(func(i, a));
       }
-      ret.push(d);
     }
     return ret;
-  },
-};
+  }
+  export function toRecord(fd:FoodData[]):Record<string, FoodData>{
+    return Object.fromEntries(fd.map((v)=>[v.id, v]));    
+  }
+  export function extract(fd:FoodData, table:string, row:number):FoodData{
+    let d:FoodData = {id: fd.id, data: {}};
+    if(!fd.data[table])return d;
+    const r = rows[(table + "_rows") as keyof typeof rows];
+    if(!fd.data[table][r[row]]) return d;
+    d.data[table]={};
+    d.data[table][r[row]] = {...fd.data[table][r[row]]};
+    return d;
+  }
+  export function calc(fd:FoodData, value:FoodData|number|string, func:(a:FoodValue, b:FoodValue)=>FoodValue):FoodData{
+    const d:FoodData = {id: fd.id, data: {...fd.data}};
+    const val:FoodValue ={raw: value.toString()};
+    if(typeof value == "number"){
+      val.number = value as number;
+    }
+    switch(typeof value){
+      case "object":
+        if(Object.keys(fd.data).length == 1 && Object.keys(Object.entries(fd.data)[0][1]).length == 1){
+            let num = Object.entries(Object.entries(fd.data)[0][1])[0][1];
+            for(let j in d.data){
+              d.data[j] = { ...fd.data[j] };
+              for(let k in d.data[j]){
+                if(d.data[j][k].number == undefined) continue;
+                d.data[j][k]=  func(d.data[j][k], num);
+              }
+            }
+        } else {
+          for(let j in fd.data){
+            if(!d.data[j]) continue;
+            d.data[j] = { ...d.data[j] };
+            for(let k in fd.data[j]){
+              if(!d.data[j][k]) continue;
+              const v =  (value as FoodData);
+              if(v.data[j] == undefined) continue;
+              if(v.data[j][k] == undefined) continue;
+              d.data[j][k]=  func(d.data[j][k], v.data[j][k]);
+            }
+          }
+        }
+      break;
+      default:
+        for(let j in d.data){
+          d.data[j] = { ...d.data[j] };
+          for(let k in d.data[j]){
+            d.data[j][k] =  func(d.data[j][k], val);
+          }
+        }
+      break;
+    }
+    return d;
+  }
+  function number_calc(f:(a:number, b:number)=>number) : (a:FoodValue, b:FoodValue)=>FoodValue{
+    return (a:FoodValue, b:FoodValue):FoodValue=>{
+      let ret = f(a.number as number, b.number as number);
+      if(isNaN(ret)) return a;
+      return{raw:ret.toString(), number:ret};
+    }
+  }
+  
+  export function add(fd:FoodData, value:FoodData|number) :FoodData{
+    return calc(fd, value, number_calc((a, b) => a+b));
+  }
+  export function sub(fd:FoodData, value:FoodData|number) :FoodData{
+    return calc(fd, value, number_calc((a, b) => a-b));
+  }
+  export function mul(fd:FoodData, value:FoodData|number) :FoodData{
+    return calc(fd, value, number_calc((a, b) => a*b));
+  }
+  export function div(fd:FoodData, value:FoodData|number) :FoodData{
+    return calc(fd, value, number_calc((a, b) => a/b));
+  }
+  export function max(fd:FoodData, value:FoodData|number) :FoodData{
+    return calc(fd, value, number_calc((a, b) => Math.max(a, b)));
+  }
+  export function min(fd:FoodData, value:FoodData|number) :FoodData{
+    return calc(fd, value, number_calc((a, b) => Math.min(a, b)));
+  }
+}
 

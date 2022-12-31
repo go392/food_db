@@ -2,7 +2,7 @@
 import { GetStaticProps, GetStaticPropsContext, NextPage } from 'next';
 import Link from 'next/link';
 import BreadcrumbsList , { BreadcrumbsElement } from '../components/breadcrumbslist';
-import {getFoodListFromGroup, getGroup } from '../utils/data';
+import {FoodDataFunc, getFoodData, getFoodListFromGroup, getFoodTable, getGroup } from '../utils/data';
 
 type GroupIndex = {
   id:string,
