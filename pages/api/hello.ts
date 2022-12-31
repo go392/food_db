@@ -8,7 +8,7 @@ export default function handler(
   res: NextApiResponse
 ) {
   
-  const food_list = getFoodData(0xffff, 0xffff)[0];
-  const mul = FoodDataFunc.mul(food_list, 50);
-  res.status(200).json(mul);
+  const food_list = getFoodData(0xfffff, 0xfffff);
+  const mul = FoodDataFunc.arrayExec(food_list, FoodDataFunc.mul, [50]);
+  res.status(200).json(mul[2]);
 }

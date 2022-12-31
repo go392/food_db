@@ -238,7 +238,6 @@ export namespace FoodDataFunc{
       return{raw:ret.toString(), number:ret};
     }
   }
-  
   export function add(fd:FoodData, value:FoodData|number) :FoodData{
     return calc(fd, value, number_calc((a, b) => a+b));
   }
