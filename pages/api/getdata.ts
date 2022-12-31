@@ -1,6 +1,6 @@
 
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getAllFoodList, getFoodTableList, getFoodListFromGroup, getGroup, getFoodData, getFoodTable } from '../../utils/data';
+import { getAllFoodList, getFoodTableList, getFoodListFromGroup,getFoodData, getFoodTable, getGroup } from '../../utils/data';
 
 type GetDataResponse = {
   data?: any,
@@ -17,8 +17,8 @@ export default function handler(
       let data= getFoodListFromGroup(req.query["group"] as string);
       res.status(200).json({status:"success", data});
     } else {
-      let list =  getAllFoodList();
-      let data =list.map((v:string)=>getFoodTableList(v));
+      let list =  getGroup();
+      let data =list.map((v:string)=>getFoodListFromGroup(v));
       res.status(200).json({status:"success", data});
     }
     return;
