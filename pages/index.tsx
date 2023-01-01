@@ -2,7 +2,7 @@
 import { GetStaticProps, GetStaticPropsContext, NextPage } from 'next';
 import Link from 'next/link';
 import BreadcrumbsList , { BreadcrumbsElement } from '../components/breadcrumbslist';
-import {FoodDataFunc, getFoodData, getFoodListFromGroup, getFoodTable, getGroup } from '../utils/data';
+import { FoodGroup } from '../utils/data';
 
 type GroupIndex = {
   id:string,
@@ -14,7 +14,7 @@ type Props = {
 }
 
 export const getStaticProps: GetStaticProps<Props> =  async (context : GetStaticPropsContext) =>{
-  const group:GroupIndex[] = getGroup().map((v:string):GroupIndex => { return {id:v, name:getFoodListFromGroup(v).name} });
+  const group:GroupIndex[] = FoodGroup.getList().map((v:string):GroupIndex => { return {id:v, name:FoodGroup.fromGroup(v).name} });
   return {props:{
     group
   }};

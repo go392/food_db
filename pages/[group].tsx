@@ -3,14 +3,14 @@ import { GetStaticPathsContext, GetStaticPaths, GetStaticProps, GetStaticPropsCo
 import Link from 'next/link';
 import BreadcrumbsList, {BreadcrumbsElement} from '../components/breadcrumbslist';
 import { BreadcrumbsHome } from "./index";
-import { getFoodListFromGroup, getGroup } from '../utils/data';
+import { FoodGroup } from '../utils/data';
 
 type Props = {
     group:any
 }
 
 export const getStaticPaths : GetStaticPaths = async(context : GetStaticPathsContext) =>{
-  let paths= getGroup();
+  let paths= FoodGroup.getList();
   let groups = paths.map((value:string) => { return {params:{ group:value}}});
   return {
     paths:groups,
@@ -22,7 +22,7 @@ export const getStaticProps: GetStaticProps<Props> =  async ({params} : GetStati
   if(params == undefined){
     return {props:{group:[]}};
   }
-  let group = getFoodListFromGroup(params.group as string);
+  let group = FoodGroup.fromGroup(params.group as string);
   return {
     props:{group}
   };

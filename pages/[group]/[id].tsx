@@ -1,6 +1,6 @@
 import { InferGetStaticPropsType, GetStaticPropsContext, NextPage } from 'next'
 import Link from "next/link";
-import { FoodTable, getAllFoodList, getFoodData, getFoodListFromGroup, getFoodTableList, getGroup } from "../../utils/data";
+import { FoodTable,  FoodData, FoodGroup } from "../../utils/data";
 import { table_name } from "../../data/table";
 import { BreadcrumbsGroup } from '../[group]';
 import BreadcrumbsList, { BreadcrumbsElement } from '../../components/breadcrumbslist';
@@ -13,7 +13,7 @@ type LinkInfo={
 
 
 export const getStaticPaths = async () => { 
-  let paths: string[]=getAllFoodList();
+  let paths: string[]=FoodTable.getAllList();
   let  ids = paths.map((value:string) => { return {params:{group:value.substring(0,2), id:value.substring(2)}}});
   return { 
     paths:ids, 
@@ -25,11 +25,11 @@ export const getStaticProps = async ({params}: GetStaticPropsContext) => {
   if(params == undefined){
     return {props: {links:[], id:"", name:"", groupname:""}};
   }
-  const info = getFoodListFromGroup(params.group as string);
+  const info = FoodGroup.fromGroup(params.group as string);
   const groupname =info.name;
   const id = `${params.group}${params.id}`;
   const name = info.data[id].name;
-  let paths = getFoodTableList(id);
+  let paths = FoodTable.getList(id);
   let links:LinkInfo[] = [];
   paths.forEach((p:string) =>{
     let href = `/${params.group}/${params.id}/${p}`;

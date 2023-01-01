@@ -1,6 +1,6 @@
 
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getFoodListFromGroup, getGroup } from '../../utils/data';
+import { FoodGroup } from '../../utils/data';
 
 type FoodList = {
   name: string,
@@ -18,7 +18,7 @@ function Search(query:string) : FoodListSearchResponse{
 
   let search_words:string[];
   search_words = query.split(' ');
-  let data = getGroup().map((v:string)=>getFoodListFromGroup(v));
+  let data = FoodGroup.getList().map((v:string)=>FoodGroup.fromGroup(v));
 
   let ret : FoodListSearchResponse = {status:"success"};
   ret.data = [];

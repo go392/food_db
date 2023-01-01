@@ -1,5 +1,5 @@
 import { InferGetStaticPropsType, GetStaticPropsContext,NextPage } from 'next'
-import { FoodTable, FoodValue, getAllFoodList, getFoodListFromGroup, getFoodTable, getFoodTableList } from "../../../utils/data";
+import { FoodTable, FoodValue, FoodGroup } from "../../../utils/data";
 import { useState } from 'react';
 import BreadcrumbsList, { BreadcrumbsElement } from '../../../components/breadcrumbslist';
 import { BreadcrumbsID } from '../[id]';
@@ -8,10 +8,10 @@ import { table_name } from '../../../data/table';
 type Props = InferGetStaticPropsType<typeof getStaticProps>;
 
 export const getStaticPaths = async () => {
-  let paths = getAllFoodList();
+  let paths = FoodTable.getAllList();
   let ids: any[]=[];
   paths.forEach((v:string) => {
-    let tables = getFoodTableList(v);
+    let tables = FoodTable.getList(v);
     tables.forEach((t:string) => {
       ids.push({params:{group:v.substring(0,2), id:v.substring(2), slug:t}});
     });
@@ -28,12 +28,12 @@ export const getStaticProps = async ({params}: GetStaticPropsContext) => {
   if(params == undefined){
     return {props:{data:{}, unit:{}, name:"", id:"", groupname:"", table:""}};
   }
-  const info =  getFoodListFromGroup(params.group as string);
+  const info =  FoodGroup.fromGroup(params.group as string);
   const groupname =info.name;
   const id = `${params.group}${params.id}`;
   const name = info.data[id].name;
-  const data = getFoodTable(`${params.group}${params.id}`, `${params.slug}`) as FoodTable;
-  const unit = getFoodTable("unit", `${params.slug}`) as FoodTable;
+  const data = FoodTable.get(`${params.group}${params.id}`, `${params.slug}`) as FoodTable;
+  const unit = FoodTable.get("unit", `${params.slug}`) as FoodTable;
   
   return {
     props: {
