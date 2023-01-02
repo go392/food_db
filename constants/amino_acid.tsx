@@ -1,6 +1,7 @@
 import { FoodData, FoodValue } from "../utils/data";
 
-export const essential_amino_acid :FoodData={
+
+export const essential_amino_acid_2007 :FoodData={
     id:"",
     data:{
         amino_acid:{

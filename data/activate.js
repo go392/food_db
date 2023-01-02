@@ -142,7 +142,7 @@ let food_list ={};
 {
     const rows = r.amino_acid_rows;
     const units =u.amino_acid_units;
-    let list = toList("data/アミノ酸.xlsx", rows, units, 7, utils.decode_col("AF"));
+    let list = toList("data/アミノ酸.xlsx", rows, units, 6, utils.decode_col("AF"));
     write2JSON(list, "amino_acid");
     add2List(food_list, list);
 }
@@ -150,7 +150,7 @@ let food_list ={};
 {
     const rows = r.fatty_acid_rows;
     const units =u.fatty_acid_units;
-    let list = toList("data/脂肪酸.xlsx", rows, units, 7, utils.decode_col("BK"));
+    let list = toList("data/脂肪酸.xlsx", rows, units, 5, utils.decode_col("BK"));
     write2JSON(list, "fatty_acid");
     add2List(food_list, list);
 }
@@ -158,7 +158,7 @@ let food_list ={};
 {
     const rows = r.carbohydrate_rows; 
     const units = u.carbohydrate_units;
-    let list = toList("data/炭水化物.xlsx", rows, units, 8, utils.decode_col("R"));
+    let list = toList("data/炭水化物.xlsx", rows, units, 6, utils.decode_col("R"));
     write2JSON(list, "carbohydrate");
     add2List(food_list, list);
 }
@@ -166,7 +166,7 @@ let food_list ={};
 {
     const rows = r.fiber_rows;
     const units =u.fiber_units;
-    let list = toList("data/食物繊維.xlsx", rows, units, 10, utils.decode_col("N"));
+    let list = toList("data/食物繊維.xlsx", rows, units, 8, utils.decode_col("N"));
     write2JSON(list, "fiber");
     add2List(food_list, list);
 }
@@ -174,7 +174,7 @@ let food_list ={};
 {
     const rows = r.organic_acid_rows;
     const units =u.organic_acid_units;
-    let list =toList("data/有機酸.xlsx", rows, units, 8, utils.decode_col("AC"));
+    let list =toList("data/有機酸.xlsx", rows, units, 6, utils.decode_col("AC"));
     write2JSON(list, "organic_acid");
     add2List(food_list, list);
 }

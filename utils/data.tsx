@@ -178,7 +178,10 @@ export namespace FoodValue{
 }
 
 export namespace FoodData{
-  export function arrayExec(fd:FoodData[], func: (f:FoodData, ...a:any)=>FoodData|undefined, args:Array<any>|Record<string, any>):FoodData[]{
+  export function isFoodData(a:any):a is FoodData{
+    return typeof a.id == "string" && typeof a.data == "object";
+  }
+  export function arrayExec(fd:FoodData[], func: (f:FoodData, ...a:any)=>FoodData|undefined, args:any[]|Record<string, any>):FoodData[]{
     let ret :FoodData[] = [];
     for(let i of fd){
       const a = Array.isArray(args) ? args : args[i.id];
@@ -198,17 +201,56 @@ export namespace FoodData{
   export function toRecord(fd:FoodData[]):Record<string, FoodData>{
     return Object.fromEntries(fd.map((v)=>[v.id, v]));    
   }
+  export function merge(fd:FoodData, fd2:FoodData) :FoodData{
+    let d:FoodData = {id:fd.id, data:{}};
+    for(let i in fd.data){
+      d.data[i] = {};
+      for(let j in fd.data[i]){
+        d.data[i][j] = {...fd.data[i][j]};
+      }
+    }
+    for(let i in fd2.data){
+      if(!d.data[i]) d.data[i] = {};
+      for(let j in fd2.data[i]){
+        d.data[i][j] = {...fd2.data[i][j]};
+      }
+    }
+    return d;
+  }
+  export function contains(fd:FoodData, t:[string, string|number] | FoodData):FoodData| undefined{
+    if(Array.isArray(t)){
+      const table = t[0];
+      let row = t[1];
+      if(!fd.data[table])return undefined;
+      const r = rows[(table + "_rows") as keyof typeof rows];
+      if(typeof row == "number") {
+        row = r[row];
+      }
+      if(!fd.data[table][row]) return undefined;
+      return fd;
+    }
+    const fd2 = t as FoodData;
+    for(let i in fd2.data){
+      if(!fd.data[i]) return undefined;
+      for(let j in fd2.data[i]){
+        if(!fd.data[i][j]){
+          return undefined;
+        }
+      }
+    }
+    return fd;
+  }
   export function extract(fd:FoodData, t:[string, string|number] | FoodData):FoodData| undefined{
     const d:FoodData = {id: fd.id, data: {}};
     if(Array.isArray(t)){
       const table = t[0];
       let row = t[1];
-      if(!fd.data[table])return d;
+      if(!fd.data[table])return undefined;
       const r = rows[(table + "_rows") as keyof typeof rows];
       if(typeof row == "number") {
         row = r[row];
       }
-      if(!fd.data[table][row]) return d;
+      if(!fd.data[table][row]) return undefined;
       d.data[table]={};
       d.data[table][row] = {...fd.data[table][row]};
       return d;
@@ -218,10 +260,13 @@ export namespace FoodData{
       if(!fd.data[i]) return undefined;
       d.data[i] ={};
       for(let j in fd2.data[i]){
-        if(!fd.data[i][j])undefined;
+        if(!fd.data[i][j]){
+          return undefined;
+        }
         d.data[i][j] = fd.data[i][j];
       }
     }
+    return d;
   }
   export function total(fd:FoodData, as_row:[string, string], func:(f:FoodValue[], r:[string, string][])=> FoodValue) :FoodData{
     const ret:FoodData = {id:fd.id, data:{}}
@@ -241,7 +286,7 @@ export namespace FoodData{
     return total(fd, as_row, (f:FoodValue[]):FoodValue=>{
       let v = 0;
       for(let i in f){
-        if(!f[i].number){ continue; }
+        if(f[i].number == undefined){ continue; }
         v += f[i].number as number;
       }
       return FoodValue.fromNumber(v);
@@ -252,7 +297,7 @@ export namespace FoodData{
       let v = 0;
       let l = 0;
       for(let i in f){
-        if(!f[i].number){ continue; }
+        if(f[i].number == undefined){ continue; }
         l++;
         v += f[i].number as number;
       }
@@ -263,7 +308,7 @@ export namespace FoodData{
     return total(fd, as_row, (f:FoodValue[]):FoodValue=>{
       let v = -Infinity;
       for(let i in f){
-        if(!f[i].number){ continue; }
+        if(f[i].number == undefined){ continue; }
         if(v < (f[i].number as number)){
           v = f[i].number as number;
         }
@@ -275,7 +320,7 @@ export namespace FoodData{
     return total(fd, as_row, (f:FoodValue[]):FoodValue=>{
       let v = Infinity;
       for(let i in f){
-        if(!f[i].number){ continue; }
+        if(f[i].number == undefined){ continue; }
         if(v > (f[i].number as number)){
           v = f[i].number as number;
         }
@@ -288,7 +333,7 @@ export namespace FoodData{
       let v = -Infinity;
       let row:string="";
       for(let i in f){
-        if(!f[i].number){ continue; }
+        if(f[i].number == undefined){ continue; }
         if(v < (f[i].number as number)){
           v = f[i].number as number;
           row = r[i][1];
@@ -302,7 +347,7 @@ export namespace FoodData{
       let v = Infinity;
       let row:string="";
       for(let i in f){
-        if(!f[i].number){ continue; }
+        if(f[i].number == undefined){ continue; }
         if(v > (f[i].number as number)){
           v = f[i].number as number;
           row = r[i][1];
@@ -311,7 +356,7 @@ export namespace FoodData{
       return FoodValue.fromString(row);
     });
   }
-  export function trueCells(fd:FoodData, as_row:[string, string]) : FoodData{
+  export function trueItems(fd:FoodData, as_row:[string, string]) : FoodData{
     return total(fd, as_row, (f:FoodValue[], r:[string, string][]):FoodValue=>{
       let row:string[] =[];
       for(let i in f){
@@ -322,41 +367,39 @@ export namespace FoodData{
     });
   }
   export function calc(fd:FoodData, value:FoodData|number|string, func:(a:FoodValue, b:FoodValue)=>FoodValue):FoodData{
-    const d:FoodData = {id: fd.id, data: {...fd.data}};
-    const val:FoodValue ={raw: value.toString()};
-    if(typeof value == "number"){
-      val.number = value as number;
-    }
+    const d:FoodData = {id: fd.id, data: {}};
     switch(typeof value){
       case "object":
-        if(Object.keys(fd.data).length == 1 && Object.keys(Object.entries(fd.data)[0][1]).length == 1){
-            let num = Object.entries(Object.entries(fd.data)[0][1])[0][1];
-            for(let j in d.data){
-              d.data[j] = { ...fd.data[j] };
-              for(let k in d.data[j]){
-                if(d.data[j][k].number == undefined) continue;
-                d.data[j][k]=  func(d.data[j][k], num);
+        const fd2 = value as FoodData;
+        if(Object.keys(fd2.data).length == 1 && Object.keys(Object.entries(fd2.data)[0][1]).length == 1){
+            let num = Object.entries(Object.entries(fd2.data)[0][1])[0][1];
+            for(let j in fd.data){
+              d.data[j] = {};
+              for(let k in fd.data[j]){
+                if(fd.data[j][k].number == undefined) continue;
+                d.data[j][k]=  func(fd.data[j][k], num);
               }
             }
         } else {
           for(let j in fd.data){
-            if(!d.data[j]) continue;
-            d.data[j] = { ...d.data[j] };
+            if(!fd2.data[j]) continue;
+            d.data[j] = {};
             for(let k in fd.data[j]){
-              if(!d.data[j][k]) continue;
-              const v =  (value as FoodData);
-              if(v.data[j] == undefined) continue;
-              if(v.data[j][k] == undefined) continue;
-              d.data[j][k]=  func(d.data[j][k], v.data[j][k]);
+              if(!fd2.data[j][k]) continue;
+              d.data[j][k]=  func(fd.data[j][k], fd2.data[j][k]);
             }
           }
         }
       break;
       default:
-        for(let j in d.data){
-          d.data[j] = { ...d.data[j] };
-          for(let k in d.data[j]){
-            d.data[j][k] =  func(d.data[j][k], val);
+        const val:FoodValue ={raw: value.toString()};
+        if(typeof value == "number"){
+          val.number = value as number;
+        }
+        for(let j in fd.data){
+          d.data[j] = {};
+          for(let k in fd.data[j]){
+            d.data[j][k] =  func(fd.data[j][k], val);
           }
         }
       break;
