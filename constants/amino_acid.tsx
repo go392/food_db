@@ -47,7 +47,6 @@ export const essential_amino_acid_1973 :FoodData={
             "トレオニン(スレオニン)":FoodValue.fromNumber(250/6.25),
             "トリプトファン":FoodValue.fromNumber(60/6.25),
             "バリン":FoodValue.fromNumber(310/6.25),
-            "ヒスチジン":FoodValue.fromNumber(0),
         }
     }
 } 
@@ -64,7 +63,34 @@ export const essential_amino_acid_1957 :FoodData={
             "トレオニン(スレオニン)":FoodValue.fromNumber(180/6.25),
             "トリプトファン":FoodValue.fromNumber(90/6.25),
             "バリン":FoodValue.fromNumber(270/6.25),
-            "ヒスチジン":FoodValue.fromNumber(0),
         }
     }
 } 
+
+export function calcAminoAcidScore(fd:FoodData, t: "2007"|"1985"|"1973"|"1957"  = "2007"):FoodData|undefined{
+    let eaa: FoodData;
+    switch(t){
+      case "2007":
+        eaa = essential_amino_acid_2007;
+      case "1985":
+        eaa = essential_amino_acid_1985;
+      case "1973":
+        eaa = essential_amino_acid_1973;
+      case "1957":
+        eaa = essential_amino_acid_1957;
+    }
+    const f = FoodData.contains(fd, eaa);
+    if(!f) return undefined;
+    const name = FoodData.extract(fd, ["amino_acid", "食品名"]);
+    if(!name) return undefined;
+    const protein = FoodData.extract(fd, ["amino_acid", t == "2007" ? "アミノ酸組成によるたんぱく質" : "タンパク質"]);
+    if(!protein) return undefined;
+    const amino_acid = FoodData.extract(fd, eaa);
+    if(!amino_acid) return undefined;
+    const amino_acid_per_protein= FoodData.div(amino_acid, protein);
+    const amino_acid_per_essential= FoodData.mul(FoodData.div(amino_acid_per_protein, eaa), 100);
+    const is_limiting_amino_acid =FoodData.lt(amino_acid_per_essential, 100);
+    const amino_acid_score = FoodData.minValue(amino_acid_per_essential, ["amino_acid", "アミノ酸スコア"]);
+    const limiting_amino_acids = FoodData.trueItems(is_limiting_amino_acid, ["amino_acid", "制限アミノ酸"]);
+    return FoodData.merge(name, FoodData.merge(amino_acid_score, FoodData.merge(amino_acid_per_essential, limiting_amino_acids)));
+  }

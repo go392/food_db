@@ -181,6 +181,35 @@ export namespace FoodData{
   export function isFoodData(a:any):a is FoodData{
     return typeof a.id == "string" && typeof a.data == "object";
   }
+  export function sort(fd:FoodData[], t:[string, string], reverse:boolean =false): FoodData[]{
+    return fd.sort((a, b) => {
+      let av, bv;
+      if(a.data[t[0]] && a.data[t[0]][t[1]]){
+        av = a.data[t[0]][t[1]];
+      } else {
+        av = undefined;
+      }
+      if(b.data[t[0]] && b.data[t[0]][t[1]]){
+        bv = b.data[t[0]][t[1]];
+      } else {
+        bv = undefined;
+      }
+      if(av == undefined){
+        return bv == undefined ? 0 : -1;
+      }
+      if(bv == undefined){
+        return 1;
+      }
+      let r = reverse ? 1 : -1;
+      if(av.number != undefined){
+        return bv.number != undefined ? ((av.number as number) < (bv.number as number) ? 1 : -1)*r : -1;
+      }
+      if(bv.number != undefined){
+        return 1;
+      }
+      return (av.raw < bv.raw ? 1: -1)*r; 
+    })
+  }
   export function arrayExec(fd:FoodData[], func: (f:FoodData, ...a:any)=>FoodData|undefined, args:any[]|Record<string, any>):FoodData[]{
     let ret :FoodData[] = [];
     for(let i of fd){
