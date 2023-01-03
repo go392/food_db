@@ -19,7 +19,7 @@ export namespace FoodGroup{
   export function getList() : string[]{
     let paths: string[]=[];
     try{
-      paths = fs.readdirSync("./jsondata/group", undefined);
+      paths = fs.readdirSync("./public/jsondata/group", undefined);
       paths= paths.map((value:string) => path.parse(value).name);
     }catch(err){
       console.log(err);
@@ -29,7 +29,7 @@ export namespace FoodGroup{
   export function fromGroup(g:string):FoodGroup{
     let group:FoodGroup ={id:g, name:"", data:{}};
   try{
-    let pa = `./jsondata/group/${g}.json`;
+    let pa = `./public/jsondata/group/${g}.json`;
     if(!fs.existsSync(pa)){
       return {id: g, name:"", data:{} };
     }
@@ -53,7 +53,7 @@ export namespace FoodTable{
   export function getAllList():string[]{
     let paths: string[]=[];
     try{
-      paths = fs.readdirSync("./jsondata", undefined);
+      paths = fs.readdirSync("./public/jsondata", undefined);
       paths = paths.filter((value:string) => { return value != 'unit' && value != 'group'; });
     }catch(err){
       console.log(err);
@@ -64,7 +64,7 @@ export namespace FoodTable{
   export function getList(f:string):string[]{
     let paths: string[]=[];
     try{
-      let pa =`./jsondata/${f}`;
+      let pa =`./public/jsondata/${f}`;
       if(!fs.existsSync(pa)){
         return [];
       }
@@ -79,7 +79,7 @@ export namespace FoodTable{
   export function get(id:string, t:string) : FoodTable | undefined{
     let data: FoodTable = {};
     try{
-      let pa = `./jsondata/${id}/${t}.json`;
+      let pa = `./public/jsondata/${id}/${t}.json`;
       if(!fs.existsSync(pa)){
         return undefined;
       }

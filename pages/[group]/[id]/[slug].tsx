@@ -56,13 +56,19 @@ export const getStaticProps = async ({params}: GetStaticPropsContext) => {
   }
 }
 
-function getValueString(gram:number, prop:FoodValue, unit?:FoodValue) : string{
-
+function getValueString(gram:number|undefined, prop:FoodValue, unit?:FoodValue) : string{
   let unitstring = !unit || unit.raw == "" ? "" : " " + unit.raw;
-  if(gram == 100.0){
+  if(gram ==100.0){
     return prop.raw + unitstring;
   } 
-  if(!prop.number || isNaN(prop.number)) {
+  else if(gram == undefined){
+    if(prop.number == undefined){
+      return prop.raw + unitstring;
+    } else {
+      return prop.number.toFixed(2).toString() + unitstring;
+    }
+  }
+  if(prop.number==undefined || isNaN(prop.number)) {
     return prop.raw + unitstring;
   }
   return (prop.number * gram / 100.0).toFixed(2).toString() + unitstring;
