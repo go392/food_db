@@ -60,7 +60,7 @@ function getValueString(gram:number, prop:FoodValue, unit?:FoodValue) : string{
   if(!prop.number || isNaN(prop.number)) {
     return prop.raw + unitstring;
   }
-  return (prop.number * gram / 100.0).toString() + unitstring;
+  return (prop.number * gram / 100.0).toFixed(2).toString() + unitstring;
 }
 
 export const BreadcrumbsTable = (groupname:string, id:string, foodname:string, table:string): BreadcrumbsElement[] =>{
@@ -78,7 +78,7 @@ const Page: NextPage<Props> = (props: Props) => {
       <tbody>{
         Object.entries(props.data).map(([key, value]: [string, any])=><tr key={key}>
           <th className="border bg-gray-100">{key}</th>
-          <td className="border px-2 py-2">{getValueString(gram, value as FoodValue,  props.unit[key])}</td>
+          <td className="border px-2 py-2">{getValueString(gram, value as FoodValue, props.unit[key as keyof typeof props.unit])}</td>
         </tr>)
       }</tbody>
     </table>
@@ -89,7 +89,7 @@ const Page: NextPage<Props> = (props: Props) => {
         <tbody>{
           Object.entries(props.amino_acid_score).map(([key, value]: [string, any])=><tr key={key}>
             <th className="border bg-gray-100">{key}</th>
-            <td className="border px-2 py-2">{getValueString(gram, value as FoodValue, props.unit[key])}</td>
+            <td className="border px-2 py-2">{getValueString(100, value as FoodValue,  props.unit[key as keyof typeof props.unit])}</td>
           </tr>)
         }</tbody>
       </table>
