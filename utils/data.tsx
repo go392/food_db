@@ -178,6 +178,12 @@ export namespace FoodValue{
 }
 
 export namespace FoodData{
+  export function fromFoodTable(f:FoodTable, s:string, id:string="") : FoodData{
+    const ret :FoodData={id, data:{}};
+    ret.data[s] = f;
+    return ret;
+  }
+
   export function isFoodData(a:any):a is FoodData{
     return typeof a.id == "string" && typeof a.data == "object";
   }

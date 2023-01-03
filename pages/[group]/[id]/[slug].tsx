@@ -1,9 +1,10 @@
 import { InferGetStaticPropsType, GetStaticPropsContext,NextPage } from 'next'
-import { FoodTable, FoodValue, FoodGroup } from "../../../utils/data";
+import { FoodTable, FoodValue, FoodGroup, FoodData } from "../../../utils/data";
 import { useState } from 'react';
 import BreadcrumbsList, { BreadcrumbsElement } from '../../../components/breadcrumbslist';
 import { BreadcrumbsID } from '../[id]';
 import { table_name } from '../../../data/table';
+import { calcAminoAcidScore } from '../../../constants/amino_acid';
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>;
 
@@ -34,7 +35,9 @@ export const getStaticProps = async ({params}: GetStaticPropsContext) => {
   const name = info.data[id].name;
   const data = FoodTable.get(`${params.group}${params.id}`, `${params.slug}`) as FoodTable;
   const unit = FoodTable.get("unit", `${params.slug}`) as FoodTable;
-  
+  let amino_acid_score:FoodTable | undefined=undefined;
+  if(params.slug == "amino_acid")amino_acid_score = calcAminoAcidScore(FoodData.fromFoodTable(data, "amino_acid"))?.data["amino_acid"];
+
   return {
     props: {
       groupname,
@@ -42,6 +45,7 @@ export const getStaticProps = async ({params}: GetStaticPropsContext) => {
       name,
       data,
       unit,
+      amino_acid_score,
       table:params.slug as string,
     }
   }
@@ -68,11 +72,30 @@ const Page: NextPage<Props> = (props: Props) => {
 
   return <div className="max-w-lg m-auto">
     <h1 className='text-2xl font-bold'>{props.name}</h1>
-  <BreadcrumbsList list={BreadcrumbsTable(props.groupname, props.id, props.name, props.table)}/>
+    <BreadcrumbsList list={BreadcrumbsTable(props.groupname, props.id, props.name, props.table)}/>
     <input value={gram} type="number" onChange={(e)=>setGram(parseFloat(e.target.value))} className=" border bg-gray-100 w-full px-2 py-2" />
-    <table className="table-auto border-collapse border w-full"><tbody>{
-      Object.entries(props.data).map(([key, value]: [string, any])=><tr key={key}><th className="border bg-gray-100">{key}</th><td className="border px-2 py-2">{getValueString(gram, value as FoodValue, props.unit[key])}</td></tr>)
-    }</tbody></table></div>
+    <table className="table-auto border-collapse border w-full">
+      <tbody>{
+        Object.entries(props.data).map(([key, value]: [string, any])=><tr key={key}>
+          <th className="border bg-gray-100">{key}</th>
+          <td className="border px-2 py-2">{getValueString(gram, value as FoodValue,  props.unit[key])}</td>
+        </tr>)
+      }</tbody>
+    </table>
+    {props.amino_acid_score ? 
+      <>
+      <h2 className='text-xl font-bold'>アミノ酸スコア</h2>
+      <table className="table-auto border-collapse border w-full">
+        <tbody>{
+          Object.entries(props.amino_acid_score).map(([key, value]: [string, any])=><tr key={key}>
+            <th className="border bg-gray-100">{key}</th>
+            <td className="border px-2 py-2">{getValueString(gram, value as FoodValue, props.unit[key])}</td>
+          </tr>)
+        }</tbody>
+      </table>
+      </> : <></>
+    }
+</div>
 };
 
 export default Page;

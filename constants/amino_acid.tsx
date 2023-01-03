@@ -92,5 +92,5 @@ export function calcAminoAcidScore(fd:FoodData, t: "2007"|"1985"|"1973"|"1957"  
     const is_limiting_amino_acid =FoodData.lt(amino_acid_per_essential, 100);
     const amino_acid_score = FoodData.minValue(amino_acid_per_essential, ["amino_acid", "アミノ酸スコア"]);
     const limiting_amino_acids = FoodData.trueItems(is_limiting_amino_acid, ["amino_acid", "制限アミノ酸"]);
-    return FoodData.merge(name, FoodData.merge(amino_acid_score, FoodData.merge(amino_acid_per_essential, limiting_amino_acids)));
+    return FoodData.merge(name, FoodData.merge(amino_acid_score,  limiting_amino_acids));
   }

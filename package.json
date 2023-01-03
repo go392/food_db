@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run activate_db && next build",
+    "build": "next build",
     "activate_build": "npm run activate_db && next build",
     "start": "next start",
     "lint": "next lint",
