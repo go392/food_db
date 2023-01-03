@@ -72,18 +72,22 @@ export function calcAminoAcidScore(fd:FoodData, t: "2007"|"1985"|"1973"|"1957"  
     switch(t){
       case "2007":
         eaa = essential_amino_acid_2007;
+        break;
       case "1985":
         eaa = essential_amino_acid_1985;
+        break;
       case "1973":
         eaa = essential_amino_acid_1973;
+        break;
       case "1957":
         eaa = essential_amino_acid_1957;
+        break;
     }
     const f = FoodData.contains(fd, eaa);
     if(!f) return undefined;
     const name = FoodData.extract(fd, ["amino_acid", "食品名"]);
     if(!name) return undefined;
-    const protein = FoodData.extract(fd, ["amino_acid", t == "2007" ? "アミノ酸組成によるたんぱく質" : "タンパク質"]);
+    const protein = FoodData.extract(fd, ["amino_acid", t == "2007" ? "アミノ酸組成によるたんぱく質" : "たんぱく質"]);
     if(!protein) return undefined;
     const amino_acid = FoodData.extract(fd, eaa);
     if(!amino_acid) return undefined;

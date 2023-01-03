@@ -35,11 +35,23 @@ export const getStaticProps = async ({params}: GetStaticPropsContext) => {
   const name = info.data[id].name;
   const data = FoodTable.get(`${params.group}${params.id}`, `${params.slug}`) as FoodTable;
   const unit = FoodTable.get("unit", `${params.slug}`) as FoodTable;
-  let amino_acid_score:FoodTable | null=null;
+  const amino_acid_score:Record<string, FoodTable>={};
   if(params.slug == "amino_acid"){
-    let a = calcAminoAcidScore(FoodData.fromFoodTable(data, "amino_acid"))?.data["amino_acid"];
+    let a = calcAminoAcidScore(FoodData.fromFoodTable(data, "amino_acid"), "2007")?.data["amino_acid"];
     if(a != undefined){
-      amino_acid_score = a;
+      amino_acid_score["アミノ酸スコア"] = a;
+    }
+    a = calcAminoAcidScore(FoodData.fromFoodTable(data, "amino_acid"), "1985")?.data["amino_acid"];
+    if(a != undefined){
+      amino_acid_score["アミノ酸スコア1985"] = a;
+    }
+    a = calcAminoAcidScore(FoodData.fromFoodTable(data, "amino_acid"), "1973")?.data["amino_acid"];
+    if(a != undefined){
+      amino_acid_score["アミノ酸スコア1973"] = a;
+    }
+    a = calcAminoAcidScore(FoodData.fromFoodTable(data, "amino_acid"), "1957")?.data["amino_acid"];
+    if(a != undefined){
+      amino_acid_score["プロテインスコア"] = a;
     }
   }
 
@@ -82,7 +94,7 @@ const Page: NextPage<Props> = (props: Props) => {
   const [gram, setGram] = useState(100);
 
   return <div className="max-w-lg m-auto">
-    <h1 className='text-2xl font-bold'>{props.name}</h1>
+    <h1 className='text-2xl font-bold  py-2'>{props.name}</h1>
     <BreadcrumbsList list={BreadcrumbsTable(props.groupname, props.id, props.name, props.table)}/>
     <input value={gram} type="number" onChange={(e)=>setGram(parseFloat(e.target.value))} className=" border bg-gray-100 w-full px-2 py-2" />
     <table className="table-auto border-collapse border w-full">
@@ -93,18 +105,18 @@ const Page: NextPage<Props> = (props: Props) => {
         </tr>)
       }</tbody>
     </table>
-    {props.amino_acid_score ? 
+    {Object.entries(props.amino_acid_score as Record<string, FoodTable>).map(([k, v])=>
       <>
-      <h2 className='text-xl font-bold'>アミノ酸スコア</h2>
+      <h2 className='text-xl font-bold py-2'>{k}</h2>
       <table className="table-auto border-collapse border w-full">
         <tbody>{
-          Object.entries(props.amino_acid_score).map(([key, value]: [string, any])=><tr key={key}>
+          Object.entries(v).map(([key, value]: [string, any])=><tr key={key}>
             <th className="border bg-gray-100">{key}</th>
-            <td className="border px-2 py-2">{getValueString(100, value as FoodValue,  props.unit[key as keyof typeof props.unit])}</td>
+            <td className="border px-2 py-2">{getValueString(undefined, value as FoodValue,  props.unit[key as keyof typeof props.unit])}</td>
           </tr>)
         }</tbody>
       </table>
-      </> : <></>
+      </>) 
     }
 </div>
 };
