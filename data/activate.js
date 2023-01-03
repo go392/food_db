@@ -12,8 +12,8 @@ function write2JSON(list, filename){
     for (let i of list){
         let primary = i[PRIMARY].raw != "" ? i[PRIMARY].raw : "unit";
         try {
-            fs.mkdirSync(`./public/jsondata/${primary}/`, {recursive:true});
-            fs.writeFileSync(`./public/jsondata/${primary}/${filename}.json`, JSON.stringify(i).toString(), 'utf8');
+            fs.mkdirSync(`./jsondata/${primary}/`, {recursive:true});
+            fs.writeFileSync(`./jsondata/${primary}/${filename}.json`, JSON.stringify(i).toString(), 'utf8');
         }catch(err){
             console.log(err);
         }
@@ -180,11 +180,11 @@ let food_list ={};
 }
 
 try {
-    fs.mkdirSync(`./public/jsondata/group`, {recursive:true})
+    fs.mkdirSync(`./jsondata/group`, {recursive:true})
     for(let i in food_list){
         const group = g.group_name[i];
         let obj ={data : food_list[i], id:i, name:group};
-        fs.writeFileSync(`./public/jsondata/group/${i}.json`, JSON.stringify(obj).toString(), 'utf8');
+        fs.writeFileSync(`./jsondata/group/${i}.json`, JSON.stringify(obj).toString(), 'utf8');
     }
 }catch(err){
     console.log(err);

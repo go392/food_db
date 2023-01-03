@@ -1,36 +1,67 @@
 
-import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react';
-import { GetServerSideProps, GetServerSidePropsContext } from 'next';
+import { GetStaticProps, GetStaticPropsContext } from 'next';
 import Link from 'next/link';
+import { FoodGroup } from '../utils/data';
 
 type Props = {
-  q: string,
+  data: FoodGroup[]
 }
 
-export const getServerSideProps: GetServerSideProps<Props> =  async ({query} : GetServerSidePropsContext) =>{
-  let q :string= query["q"] as string;
+export const getStaticProps: GetStaticProps<Props> =  async (context : GetStaticPropsContext) =>{
+  const data = FoodGroup.getList().map((v:string)=>FoodGroup.fromGroup(v));
 
   return {props:{
-    q,
+    data,
   }};
 }
 
+type FoodList = {
+  name: string,
+  id: string,
+}
+
+type FoodListSearchResponse = {
+  data?:FoodList[],
+  status: string,
+  message?: string,
+};
+
+function searchData(data: FoodGroup[], query:string) : FoodListSearchResponse{
+  if(query == "") return {status:"success", data:[]}
+
+  let search_words:string[];
+  search_words = query.split(' ');
+
+  let ret : FoodListSearchResponse = {status:"success"};
+  ret.data = [];
+  for(let d of data){
+    for(let i in d.data){
+      let match = true;
+      for(let j of search_words){
+        if(!d.data[i].name.includes(j) && !(d.data[i].alias && (d.data[i].alias as string).includes(j))){
+           match = false;
+           break;
+        }
+      }
+      if(match)ret.data.push({name: d.data[i].name as string, id: i});
+    }
+  }
+  return ret;
+}
+
 export default function Search(props: Props) {
-  const router = useRouter();
-  const [searchText, setSearchText] = useState(props.q);
-  const [searchResult, setSearchResult] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const [searchResult, setSearchResult] = useState<FoodList[]>([]);
   useEffect(() => {
     const timeOutId = setTimeout(() => search(), 500);
     return () => clearTimeout(timeOutId);
   }, [searchText]);
 
   const search = async() =>{
-    router.push({pathname: '/search', query:{q:searchText}});
-    const  res= await fetch(`/api/search?q=${searchText}`);
-    const json = await res.json();
-    if(json.data){
-      setSearchResult(json.data);
+    const res = searchData(props.data, searchText);
+    if(res.data){
+      setSearchResult(res.data);
     }
   }
 
