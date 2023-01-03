@@ -35,8 +35,13 @@ export const getStaticProps = async ({params}: GetStaticPropsContext) => {
   const name = info.data[id].name;
   const data = FoodTable.get(`${params.group}${params.id}`, `${params.slug}`) as FoodTable;
   const unit = FoodTable.get("unit", `${params.slug}`) as FoodTable;
-  let amino_acid_score:FoodTable | undefined=undefined;
-  if(params.slug == "amino_acid")amino_acid_score = calcAminoAcidScore(FoodData.fromFoodTable(data, "amino_acid"))?.data["amino_acid"];
+  let amino_acid_score:FoodTable | null=null;
+  if(params.slug == "amino_acid"){
+    let a = calcAminoAcidScore(FoodData.fromFoodTable(data, "amino_acid"))?.data["amino_acid"];
+    if(a != undefined){
+      amino_acid_score = a;
+    }
+  }
 
   return {
     props: {
