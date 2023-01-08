@@ -1,11 +1,12 @@
 import { InferGetStaticPropsType, GetStaticPropsContext,NextPage } from 'next'
-import { FoodTable, FoodValue, FoodGroup, FoodData } from "../../../utils/data";
+import { FoodTable, FoodGroup, FoodData } from "../../../utils/data";
 import { useState } from 'react';
 import BreadcrumbsList, { BreadcrumbsElement } from '../../../components/breadcrumbslist';
 import { BreadcrumbsID } from '../[id]';
-import { table_name } from '../../../data/table';
 import { calcAminoAcidScore } from '../../../constants/amino_acid';
-import Link from 'next/link';
+import ShowFoodTable from '../../../components/showfoodtable';
+import FoodTableList from '../../../components/foodtablelist';
+import FoodContentsSetter from '../../../components/foodcontentssetter';
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>;
 
@@ -71,24 +72,6 @@ export const getStaticProps = async ({params}: GetStaticPropsContext) => {
   }
 }
 
-function getValueString(gram:number|undefined, prop:FoodValue, unit?:FoodValue) : string{
-  let unitstring = !unit || unit.raw == "" ? "" : " " + unit.raw;
-  if(gram ==100.0){
-    return prop.raw + unitstring;
-  } 
-  else if(gram == undefined){
-    if(prop.number == undefined){
-      return prop.raw + unitstring;
-    } else {
-      return prop.number.toFixed(2).toString() + unitstring;
-    }
-  }
-  if(prop.number==undefined || isNaN(prop.number)) {
-    return prop.raw + unitstring;
-  }
-  return (prop.number * gram / 100.0).toFixed(2).toString() + unitstring;
-}
-
 export const BreadcrumbsTable = (groupname:string, id:string, foodname:string): BreadcrumbsElement[] =>{
   return BreadcrumbsID(groupname, id, foodname);
 }
@@ -97,37 +80,15 @@ const FoodTablePage: NextPage<Props> = (props: Props) => {
   const [gram, setGram] = useState(100);
 
   return <div className="max-w-lg m-auto">
-    <h1 className='text-2xl font-bold  py-2'>{props.name}</h1>
+    <h1 className='text-2xl font-bold py-2'>{props.name}</h1>
     <BreadcrumbsList list={BreadcrumbsTable(props.groupname, props.id, props.name)}/>
-    <div className='flex'>
-    <input value={gram} type="number" onChange={(e)=>setGram(parseFloat(e.target.value))} className=" border bg-gray-100 flex-1 px-2 py-2 my-2" />
-    <div className='flex-0 px-2 py-2'>g</div>
-    </div>
-    <div className='flex w-full'>
-      {props.tableList.map((e, i)=>
-      <Link key={i} className={'text-sm inline-block rounded px-2 py-2 mx-0.5 flex-1 text-center' + (e == props.table ? " text-white bg-gray-500": " bg-gray-300 hover:bg-gray-200")} href={`/${props.id.substring(0,2)}/${props.id.substring(2)}/${e}`}>{table_name[e as keyof typeof table_name]}
-      </Link>)
-      }
-    </div>
-    <table className="table-auto border-collapse border w-full">
-      <tbody>{
-        Object.entries(props.data).map(([key, value]: [string, any], i)=><tr key={i}>
-          <th className="border bg-gray-100">{key}</th>
-          <td className="border px-2 py-2">{getValueString(gram, value as FoodValue, props.unit[key as keyof typeof props.unit])}</td>
-        </tr>)
-      }</tbody>
-    </table>
+    <FoodContentsSetter contents={gram} setContents={setGram} />
+    <FoodTableList tableList={props.tableList} current={props.table} id={props.id} />
+    <ShowFoodTable foodTable={props.data} unit={props.unit} contents={gram} />
     {Object.entries(props.amino_acid_score).map(([k, v], i)=>
       <div key={i}>
       <h2 className='text-xl font-bold py-2'>{k}</h2>
-      <table className="table-auto border-collapse border w-full">
-        <tbody>{
-          Object.entries(v).map(([key, value]: [string, any], i2)=><tr key={i2}>
-            <th className="border bg-gray-100">{key}</th>
-            <td className="border px-2 py-2">{getValueString(undefined, value as FoodValue,  props.unit[key as keyof typeof props.unit])}</td>
-          </tr>)
-        }</tbody>
-      </table>
+      <ShowFoodTable foodTable={v} unit={props.unit} />
       </div>) 
     }
 </div>

@@ -1,6 +1,7 @@
 import fs, { existsSync } from 'fs';
 import path from 'path';
 import rows from '../data/rows';
+import { table_name } from '../data/table';
 
 
 
@@ -69,7 +70,9 @@ export namespace FoodTable{
         return [];
       }
       paths = fs.readdirSync(pa, undefined);
-      paths = paths.map((v)=> path.parse(v).name);
+      paths = paths.map((v)=> path.parse(v).name).sort((a, b) =>{
+        return Object.keys(table_name).indexOf(a) > Object.keys(table_name).indexOf(b) ? 1: -1;
+      });
     }catch(err){
       console.log(err);
     }
