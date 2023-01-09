@@ -2,6 +2,7 @@
 import { GetStaticProps, GetStaticPropsContext, NextPage } from 'next';
 import Link from 'next/link';
 import BreadcrumbsList , { BreadcrumbsElement } from '../components/breadcrumbslist';
+import SearchBar from '../components/searchbar';
 import { FoodGroup } from '../utils/data';
 
 type GroupIndex = {
@@ -26,7 +27,8 @@ export const BreadcrumbsHome = () : BreadcrumbsElement[] =>{
 
 const Home: NextPage<Props> = (props: Props) => {
   return <div className='max-w-lg m-auto'>
-     <h1 className='text-2xl font-bold'>食品データベース</h1>
+    <h1 className='text-2xl font-bold'>食品データベース</h1>
+    <SearchBar />
     <BreadcrumbsList list={BreadcrumbsHome()} />
     {props.group.map((o) => <Link href={o.id} key={o.name} className='block w-full border border-glay-100 px-2 py-2'>{o.name}</Link>)}
   </div>;
