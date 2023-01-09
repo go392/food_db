@@ -1,8 +1,8 @@
-import fs, { existsSync } from 'fs';
+import fs from 'fs';
 import path from 'path';
 import rows from '../data/rows';
 import { table_name } from '../data/table';
-
+import foodGroupList from '../jsondata/search.json'
 
 
 export type FoodIndex = {
@@ -18,28 +18,11 @@ export type FoodGroup = {
 
 export namespace FoodGroup{
   export function getList() : string[]{
-    let paths: string[]=[];
-    try{
-      paths = fs.readdirSync("./jsondata/group", undefined);
-      paths= paths.map((value:string) => path.parse(value).name);
-    }catch(err){
-      console.log(err);
-    }
-    return paths;
+    return foodGroupList.map((e) => e.id);
   }
   export function fromGroup(g:string):FoodGroup{
-    let group:FoodGroup ={id:g, name:"", data:{}};
-  try{
-    let pa = `./jsondata/group/${g}.json`;
-    if(!fs.existsSync(pa)){
-      return {id: g, name:"", data:{} };
-    }
-    group = JSON.parse(fs.readFileSync(pa, undefined).toString());
-  }catch(err){
-    console.log(err);
+    return foodGroupList[parseInt(g)-1] as unknown as FoodGroup;
   }
-  return group;
-}
 }
 
 export type FoodValue ={
@@ -54,8 +37,7 @@ export namespace FoodTable{
   export function getAllList():string[]{
     let paths: string[]=[];
     try{
-      paths = fs.readdirSync("./jsondata", undefined);
-      paths = paths.filter((value:string) => { return value != 'unit' && value != 'group'; });
+      paths = fs.readdirSync("./jsondata/foodlist", undefined);
     }catch(err){
       console.log(err);
     }
@@ -65,7 +47,7 @@ export namespace FoodTable{
   export function getList(f:string):string[]{
     let paths: string[]=[];
     try{
-      let pa =`./jsondata/${f}`;
+      let pa =`./jsondata/foodlist/${f}`;
       if(!fs.existsSync(pa)){
         return [];
       }
@@ -82,7 +64,7 @@ export namespace FoodTable{
   export function get(id:string, t:string) : FoodTable | undefined{
     let data: FoodTable = {};
     try{
-      let pa = `./jsondata/${id}/${t}.json`;
+      let pa = `./jsondata/foodlist/${id}/${t}.json`;
       if(!fs.existsSync(pa)){
         return undefined;
       }

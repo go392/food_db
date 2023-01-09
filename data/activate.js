@@ -12,8 +12,8 @@ function write2JSON(list, filename){
     for (let i of list){
         let primary = i[PRIMARY].raw != "" ? i[PRIMARY].raw : "unit";
         try {
-            fs.mkdirSync(`./jsondata/${primary}/`, {recursive:true});
-            fs.writeFileSync(`./jsondata/${primary}/${filename}.json`, JSON.stringify(i).toString(), 'utf8');
+            fs.mkdirSync(`./jsondata/foodlist/${primary}/`, {recursive:true});
+            fs.writeFileSync(`./jsondata/foodlist/${primary}/${filename}.json`, JSON.stringify(i).toString(), 'utf8');
         }catch(err){
             console.log(err);
         }
@@ -94,7 +94,27 @@ function toList(file, rows, units, beginrow, endcol){
     return ret;
 }
 
-function add2List(list, db){
+function add2FoodDB(list, unit, db, table){
+    for(let i in db){
+        if(db[i][PRIMARY].raw == ""){
+            unit[table] = {};
+            for(let j in db[i]){
+                unit[table][j] = db[i][j];
+            }
+        } else {
+            const id = db[i][PRIMARY].raw;
+            if(!list[id]){
+                list[id] = {};
+            }
+            list[id][table] = {};
+            for(let j in db[i]){
+                list[id][table][j] = db[i][j];
+            }
+        }
+    }
+}
+
+function add2SearchList(list, db){
     for(let d of db){
         if(!d["食品群"] || d["食品群"].raw=="") continue;
         if(list[d["食品群"].raw] == undefined){
@@ -128,7 +148,9 @@ function add2List(list, db){
     }
 }
 
-let food_list ={};
+let search_list ={};
+let food_db ={};
+let unit={};
 
 {
     const rows = r.nutrients_rows;
@@ -136,7 +158,8 @@ let food_list ={};
 
     let list = toList("data/栄養素.xlsx", rows, units, 12, utils.decode_col("BI"));
     write2JSON(list, "nutrients");
-    add2List(food_list, list);
+    add2SearchList(search_list, list);
+    add2FoodDB(food_db, unit, list, "nutrients");
 }
 
 {
@@ -144,7 +167,8 @@ let food_list ={};
     const units =u.amino_acid_units;
     let list = toList("data/アミノ酸.xlsx", rows, units, 6, utils.decode_col("AF"));
     write2JSON(list, "amino_acid");
-    add2List(food_list, list);
+    add2SearchList(search_list, list);
+    add2FoodDB(food_db, unit, list, "amino_acid");
 }
 
 {
@@ -152,7 +176,8 @@ let food_list ={};
     const units =u.fatty_acid_units;
     let list = toList("data/脂肪酸.xlsx", rows, units, 5, utils.decode_col("BK"));
     write2JSON(list, "fatty_acid");
-    add2List(food_list, list);
+    add2SearchList(search_list, list);
+    add2FoodDB(food_db, unit, list, "fatty_acid");
 }
 
 {
@@ -160,7 +185,8 @@ let food_list ={};
     const units = u.carbohydrate_units;
     let list = toList("data/炭水化物.xlsx", rows, units, 6, utils.decode_col("R"));
     write2JSON(list, "carbohydrate");
-    add2List(food_list, list);
+    add2SearchList(search_list, list);
+    add2FoodDB(food_db, unit, list, "carbohydrate");
 }
 
 {
@@ -168,7 +194,8 @@ let food_list ={};
     const units =u.fiber_units;
     let list = toList("data/食物繊維.xlsx", rows, units, 8, utils.decode_col("N"));
     write2JSON(list, "fiber");
-    add2List(food_list, list);
+    add2SearchList(search_list, list);
+    add2FoodDB(food_db, unit, list, "fiber");
 }
 
 {
@@ -176,16 +203,15 @@ let food_list ={};
     const units =u.organic_acid_units;
     let list =toList("data/有機酸.xlsx", rows, units, 6, utils.decode_col("AC"));
     write2JSON(list, "organic_acid");
-    add2List(food_list, list);
+    add2SearchList(search_list, list);
+    add2FoodDB(food_db, unit, list, "organic_acid");
 }
 
 try {
-    fs.mkdirSync(`./jsondata/group`, {recursive:true})
-    for(let i in food_list){
-        const group = g.group_name[i];
-        let obj ={data : food_list[i], id:i, name:group};
-        fs.writeFileSync(`./jsondata/group/${i}.json`, JSON.stringify(obj).toString(), 'utf8');
-    }
+    const data = Object.entries(search_list).sort(([k1, v1], [k2, v2]) => { return k1 < k2 ? -1: 1; }).map(([k, v]) => {return {data : v, id:k, name:g.group_name[k]};})
+    fs.writeFileSync(`./jsondata/search.json`, JSON.stringify(data).toString(), 'utf8');
+    fs.writeFileSync(`./jsondata/fooddb.json`, JSON.stringify(food_db).toString(), 'utf8');
+    fs.writeFileSync(`./jsondata/unit.json`, JSON.stringify(unit).toString(), 'utf8');
 }catch(err){
     console.log(err);
 }
