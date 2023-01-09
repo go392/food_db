@@ -38,6 +38,7 @@ export namespace FoodTable{
     let paths: string[]=[];
     try{
       paths = fs.readdirSync("./jsondata/foodlist", undefined);
+      paths = paths.filter((v) => v != "unit");
     }catch(err){
       console.log(err);
     }
