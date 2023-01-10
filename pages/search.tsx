@@ -29,6 +29,7 @@ export default function Search(props: Props) {
       setSearchResult(res.data);
     }
   }
+  search();
 
   return <div className='max-w-lg m-auto'>
     <h1 className='text-2xl font-bold'>食品データベース</h1>

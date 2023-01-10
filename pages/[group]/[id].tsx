@@ -30,7 +30,16 @@ export const BreadcrumbsID= (groupname:string, id:string, foodname:string): Brea
 }
 
 const Page: NextPage<Props> = (props : Props) => {
-  return <FoodTablePage.default groupname={props.groupname} id={props.id} name={props.name} data={props.data} unit={props.unit} amino_acid_score={props.amino_acid_score}  table={props.table} tableList={props.tableList}/>;
+  return <FoodTablePage.default 
+    groupname={props.groupname} 
+    id={props.id} 
+    name={props.name} 
+    data={props.data} 
+    unit={props.unit} 
+    amino_acid_score={props.amino_acid_score} 
+    required={props.required}
+    table={props.table}
+    tableList={props.tableList}/>;
 };
 
 export default Page;
