@@ -8,7 +8,7 @@ import ShowFoodTable from '../../../components/showfoodtable';
 import FoodTableList from '../../../components/foodtablelist';
 import FoodContentsSetter from '../../../components/foodcontentssetter';
 import SearchBar from '../../../components/searchbar';
-import { required_nutrients } from '../../../constants/nutrients';
+import { required_nutrients } from '../../../constants/required';
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>;
 
@@ -42,12 +42,8 @@ export const getStaticProps = async ({params}: GetStaticPropsContext) => {
   const amino_acid_score:Record<string, FoodTable>={};
   const tableList = FoodTable.getList(`${params.group}${params.id}`);
   let required = {};
-  switch(params.slug as string){
-    case "nutrients":
-      required = required_nutrients.data["nutrients"];
-      break;
-    case "fatty_acid":
-      required = required_nutrients.data["fatty_acid"];
+  if(required_nutrients.data[params.slug as string]){
+    required = required_nutrients.data[params.slug as string];
   }
   if(params.slug == "amino_acid"){
     let a = calcAminoAcidScore(FoodData.fromFoodTable(data, "amino_acid"), "2007")?.data["amino_acid"];

@@ -37,11 +37,34 @@ export const required_nutrients :FoodData={
             "ビオチン":FoodValue.fromNumber(50),
             "ビタミンC":FoodValue.fromNumber(100),
         },
+        amino_acid:{
+            "アミノ酸組成によるたんぱく質":FoodValue.fromNumber(81),
+            //体重60kgとして、推奨量算定係数1.25でかけたもの
+            /*
+            "イソロイシン":FoodValue.fromNumber(20*60*1.25), 
+            "ロイシン":FoodValue.fromNumber(39*60*1.25),
+            "リシン(リジン)":FoodValue.fromNumber(30*60*1.25),
+            "含硫アミノ酸 合計":FoodValue.fromNumber(15*60*1.25),
+            "芳香族アミノ酸 合計":FoodValue.fromNumber(25*60*1.25),
+            "トレオニン(スレオニン)":FoodValue.fromNumber(15*60*1.25),
+            "トリプトファン":FoodValue.fromNumber(4*60*1.25),
+            "バリン":FoodValue.fromNumber(26*60*1.25),
+            "ヒスチジン":FoodValue.fromNumber(10*60*1.25),
+            */
+        },
         fatty_acid:{
+            "脂質":FoodValue.fromNumber(62),
             "飽和脂肪酸":FoodValue.fromNumber(16),
             "n-3系多価不飽和脂肪酸":FoodValue.fromNumber(2.0),
             "n-6系多価不飽和脂肪酸":FoodValue.fromNumber(9.0),
-        }
+        },
+        carbohydrate:{
+            "利用可能炭水化物計":FoodValue.fromNumber(320),
+        },
+        fiber:{
+            "プロスキー変法 食物繊維総量":FoodValue.fromNumber(19),
+            "AOAC.2011.25法 食物繊維総量":FoodValue.fromNumber(19),
+        },
     }
 } 
 
