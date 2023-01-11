@@ -156,7 +156,7 @@ export namespace FoodData{
 
 export namespace FoodValue{
   export function fromNumber(n:number):FoodValue{
-    return {raw:n.toString(), number:n};
+    return {raw:n.toFixed(2).toString(), number:n};
   }
   export function fromString(s:string):FoodValue{
     return {raw:s};

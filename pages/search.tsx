@@ -27,9 +27,10 @@ export default function Search(props: Props) {
     const res = await (await fetch(`/api/search?q=${searchText}`)).json();
     if(res && res.data){
       setSearchResult(res.data);
+    } else {
+      setSearchResult([]);
     }
   }
-  search();
 
   return <div className='max-w-lg m-auto'>
     <h1 className='text-2xl font-bold'>食品データベース</h1>
