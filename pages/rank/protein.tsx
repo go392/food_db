@@ -34,7 +34,7 @@ const Home: NextPage<Props> = (props: Props) => {
     <h1 className='text-2xl font-bold'>たんぱく質の多い食品</h1>
     <table  className="text-sm table-auto border-collapse border w-full">
         <tbody>{
-        props.data.map((v, i) => <tr>
+        props.data.map((v, i) => <tr key={i}>
             <th className='border bg-gray-100 px-2 py-2'>{i+1}</th>
             <th className="border bg-gray-100 px-2 py-2"><Link href={`/${v.id.substring(0,2)}/${v.id.substring(2)}`}>{v.data["amino_acid"]["食品名"].raw}</Link></th>
             <td className="border px-2 py-2">{v.data["amino_acid"]["アミノ酸組成によるたんぱく質"].raw + " " + props.unit}</td>
