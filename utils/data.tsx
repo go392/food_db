@@ -155,11 +155,19 @@ export namespace FoodData{
 
 
 export namespace FoodValue{
-  export function fromNumber(n:number):FoodValue{
-    return {raw:n.toFixed(2).toString(), number:n};
+  export function fromNumber(n:number, i?:Array<string>):FoodValue{
+    const ret : FoodValue = {raw:n.toFixed(2).toString(), number:n};
+    if(i){
+      ret.infos = i;
+    }
+    return ret;
   }
-  export function fromString(s:string):FoodValue{
-    return {raw:s};
+  export function fromString(s:string, i?:Array<string>):FoodValue{
+    const ret : FoodValue = {raw:s};
+    if(i){
+      ret.infos = i;
+    }
+    return ret;
   }
 }
 
