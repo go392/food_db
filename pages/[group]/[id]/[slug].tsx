@@ -5,10 +5,11 @@ import BreadcrumbsList, { BreadcrumbsElement } from '../../../components/breadcr
 import { BreadcrumbsID } from '../[id]';
 import { calcAminoAcidScore } from '../../../constants/amino_acid';
 import ShowFoodTable from '../../../components/showfoodtable';
-import FoodTableList from '../../../components/foodtablelist';
 import FoodContentsSetter from '../../../components/foodcontentssetter';
 import SearchBar from '../../../components/searchbar';
 import { required_nutrients } from '../../../constants/required';
+import TabLinkList from '../../../components/tablinklist';
+import { table_name } from '../../../data/table';
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>;
 
@@ -91,7 +92,16 @@ const FoodTablePage: NextPage<Props> = (props: Props) => {
     <h1 className='text-2xl font-bold py-2'>{props.name}</h1>
     <BreadcrumbsList list={BreadcrumbsTable(props.groupname, props.id, props.name)}/>
     <FoodContentsSetter contents={gram} setContents={setGram} />
-    <FoodTableList tableList={props.tableList} current={props.table} id={props.id} />
+    <TabLinkList 
+      tabList={props.tableList.map((v)=>{
+        return {
+          name:v, 
+          href:`/${props.id.substring(0,2)}/${props.id.substring(2)}/${v}`,
+          show:table_name[v as keyof typeof table_name],
+        }
+      })} 
+      current={props.table} 
+    />
     <ShowFoodTable foodTable={props.data} unit={props.unit} required={props.required} contents={gram} />
     {Object.entries(props.amino_acid_score).map(([k, v], i)=>
       <div key={i}>

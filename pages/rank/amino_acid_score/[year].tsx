@@ -2,25 +2,29 @@
 import { GetStaticPaths, GetStaticPathsContext, GetStaticProps, GetStaticPropsContext, NextPage } from 'next';
 import Link from 'next/link';
 import { BreadcrumbsElement } from '../../../components/breadcrumbslist';
+import TabLinkList from '../../../components/tablinklist';
 import { calcAminoAcidScore } from '../../../constants/amino_acid';
 import FOODDB from '../../../jsondata/fooddb.json'
 import { FoodData, FoodTable } from '../../../utils/data';
 
-type Props = {
+export type Props = {
     data:FoodData[];
     year:string;
+    yearList:string[];
 }
+
+const yearList =["2007", "1985", "1973", "1957"];
 
 export const getStaticPaths : GetStaticPaths = async(context : GetStaticPathsContext) =>{
   return {
-    paths:[{params:{year:"2007"}}, {params:{year:"1985"}}, {params:{year:"1973"}}, {params:{year:"1957"}}],
+    paths:yearList.map((v) => { return {params: { year:v }} }),
     fallback:false,
   };
 }
 
 export const getStaticProps: GetStaticProps<Props> =  async (context : GetStaticPropsContext) =>{
   if(!context.params || !context.params.year) {
-    return {props: { data:[], year:"" }};
+    return {props: { data:[], year:"", yearList }};
   }
   const table = FoodData.arrayExec(Object.entries(FOODDB).map(([k, v])=> {return {id:k, data:v}}), calcAminoAcidScore, [context.params.year]);
   const sorted = FoodData.sort(table, ["amino_acid", "アミノ酸スコア"], true);
@@ -28,13 +32,19 @@ export const getStaticProps: GetStaticProps<Props> =  async (context : GetStatic
   return {props:{
     data,
     year: context.params.year as string,
+    yearList
   }};
 }
 
 
-const Home: NextPage<Props> = (props: Props) => {
+const AminoAcidScorePage: NextPage<Props> = (props: Props) => {
   return <div className='max-w-lg m-auto'>
     <h1 className='text-2xl font-bold'>アミノ酸スコアの大きい食品({props.year})</h1>
+    <TabLinkList 
+      tabList={props.yearList.map((v)=> { return { name:v, href:`/rank/amino_acid_score/${v}`, show:`${v}` } })}
+      current={props.year}
+      cols={4}
+    />
     <table  className="text-sm table-auto border-collapse border w-full">
         <tbody>{
         props.data.map((v, i) => <tr key={i}>
@@ -47,4 +57,4 @@ const Home: NextPage<Props> = (props: Props) => {
   </div>;
 }
 
-export default Home;
+export default AminoAcidScorePage;
