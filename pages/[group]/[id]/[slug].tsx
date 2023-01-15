@@ -10,6 +10,8 @@ import SearchBar from '../../../components/searchbar';
 import { required_nutrients } from '../../../constants/required';
 import TabLinkList from '../../../components/tablinklist';
 import { table_name } from '../../../data/table';
+import Link from 'next/link';
+import { useGastric } from '../../../utils/gastric';
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>;
 
@@ -85,13 +87,17 @@ export const BreadcrumbsTable = (groupname:string, id:string, foodname:string): 
 }
 
 const FoodTablePage: NextPage<Props> = (props: Props) => {
+  const gastric = useGastric();
   const [gram, setGram] = useState(100);
 
   return <div className="max-w-lg m-auto">
     <SearchBar/>
     <h1 className='text-2xl font-bold py-2'>{props.name}</h1>
     <BreadcrumbsList list={BreadcrumbsTable(props.groupname, props.id, props.name)}/>
-    <FoodContentsSetter contents={gram} setContents={setGram} />
+    <div className='flex'>
+      <FoodContentsSetter contents={gram} setContents={setGram} />
+      <button className='grow-0 w-10 h-10 rounded bg-gray-300 block my-auto' onClick={() => gastric.addFood({id:props.id, name:props.name, contents:gram})}>+</button>
+    </div>
     <TabLinkList 
       tabList={props.tableList.map((v)=>{
         return {
@@ -101,6 +107,7 @@ const FoodTablePage: NextPage<Props> = (props: Props) => {
         }
       })} 
       current={props.table} 
+      cols={3}
     />
     <ShowFoodTable foodTable={props.data} unit={props.unit} required={props.required} contents={gram} />
     {Object.entries(props.amino_acid_score).map(([k, v], i)=>
