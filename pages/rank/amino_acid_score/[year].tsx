@@ -48,7 +48,6 @@ const AminoAcidScorePage: NextPage<Props> = (props: Props) => {
     <TabLinkList 
       tabList={props.yearList.map((v)=> { return { name:v, href:`/rank/amino_acid_score/${v}`, show:`${v}` } })}
       current={props.year}
-      cols={4}
     />
     <table  className="text-sm table-auto border-collapse border w-full">
         <tbody>{
