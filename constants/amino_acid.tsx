@@ -1,4 +1,4 @@
-import { FoodData, FoodValue } from "../utils/data";
+import { FoodData, FoodValue } from "../utils/calc";
 
 
 export const essential_amino_acid_2007 :FoodData={
@@ -36,7 +36,7 @@ export const essential_amino_acid_1985 :FoodData={
 } 
 
 export const essential_amino_acid_1973 :FoodData={
-    id:"",
+    id:"", 
     data:{
         amino_acid:{
             "イソロイシン":FoodValue.fromNumber(250/6.25),

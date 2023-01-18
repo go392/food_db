@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { FoodGroup } from '../utils/data';
 import { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
+import { useGastric } from '../utils/gastric';
 
 type Props = {
   q: string
@@ -16,6 +17,7 @@ export const getServerSideProps = ({query} : GetServerSidePropsContext) : GetSer
 }
 
 export default function Search(props: Props) {
+  const gastric = useGastric();
   const [searchText, setSearchText] = useState(props.q);
   const [searchResult, setSearchResult] = useState([]);
   useEffect(() => {
@@ -40,7 +42,16 @@ export default function Search(props: Props) {
     </div>
     {searchResult.length ? <p className='text-xs py-2 text-gray-500'>{searchResult.length}件の検索結果</p> : <></>}
     <div>{
-      searchResult.map((f:any)=><Link key={f.id} className='block border border-gray-100 px-2 py-2' href={`${f.id.substring(0,2)}/${f.id.substring(2)}`}>{f.name}</Link>)
+      searchResult.map((f:any)=>
+      <div key={f.id} className="flex">
+      <Link
+        className='block border border-gray-100 px-2 py-2 w-full' 
+        href={`${f.id.substring(0,2)}/${f.id.substring(2)}`}>{
+          f.name
+      }</Link>
+      <button className='grow-0 w-10 h-10 rounded bg-gray-300 hover:bg-gray-200block my-auto' 
+        onClick={() => {gastric.addFood({id:f.id, name:f.name, contents:100})}}>+</button>
+      </div>)
     }</div>
   </div>;
 }

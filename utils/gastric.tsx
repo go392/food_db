@@ -7,17 +7,17 @@ export type FoodInfo = {
     contents:number;
 }
 
+
 export const useGastric = ()=>{
   const [gastric, setGastric] = useState<FoodInfo[]>([]);
-  const GastricItemIds = gastric.map((item) => item.id);
 
   const setGastricWithCookie = (f: FoodInfo[])=>{
     setGastric(f);
-    cookie.set('gastric', JSON.stringify(gastric.filter((v)=>v.contents!= 0)), { expires: 1 });
+    cookie.set('gastric', JSON.stringify(f.filter((v)=>v.contents!= 0)), { expires: 1 });
   }
 
   const addFood = (addedItem: FoodInfo) => {
-      if (GastricItemIds.includes(addedItem.id)) {
+      if (gastric.map((item) => item.id).includes(addedItem.id)) {
         const newCart = gastric.map((item) => {
           if (item.id === addedItem.id) {
             let ret = { ...item };
@@ -32,7 +32,7 @@ export const useGastric = ()=>{
       }
   };
   const setFood = (setItem: FoodInfo) =>{
-    if (GastricItemIds.includes(setItem.id)) {
+    if (gastric.map((item) => item.id).includes(setItem.id)) {
       const newCart = gastric.map((item) => {
         if (item.id === setItem.id) {
           let ret = { ...item };
@@ -47,7 +47,7 @@ export const useGastric = ()=>{
     }
   };
   const removeFood = (removedItem: FoodInfo) => {
-    if (!GastricItemIds.includes(removedItem.id)) return;
+    if (!gastric.map((item) => item.id).includes(removedItem.id)) return;
     const newGastric = gastric.filter((v)=>v.id != removedItem.id);
     setGastricWithCookie(newGastric);
   };

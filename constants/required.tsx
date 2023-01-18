@@ -1,4 +1,4 @@
-import { FoodData, FoodValue } from "../utils/data";
+import { FoodData, FoodValue } from "../utils/calc";
 
 
 export const required_nutrients :FoodData={

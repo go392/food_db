@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { BreadcrumbsHome, RankingInfo, RankingList } from '..';
 import BreadcrumbsList, { BreadcrumbsElement } from '../../components/breadcrumbslist';
 import FOODDB from '../../jsondata/fooddb.json'
-import { FoodData, FoodTable } from '../../utils/data';
+import { FoodData, FoodTable } from '../../utils/calc';
+import { FoodTableServer } from '../../utils/data';
 
 
 
@@ -36,7 +37,7 @@ export const getStaticProps: GetStaticProps<Props> =  async (context : GetStatic
   }, []);
   const sorted = FoodData.sort(table, info[1].key, info[1].reverse);
   const data = sorted.slice(0, 100);
-  const u = FoodTable.get("unit", info[1].key[0]) as FoodTable;
+  const u = FoodTableServer.get("unit", info[1].key[0]) as FoodTable;
   const unit = u[info[1].key[1]].raw;
   return {props:{
     data,

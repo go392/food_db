@@ -1,5 +1,6 @@
 import { InferGetStaticPropsType, GetStaticPropsContext,NextPage } from 'next'
-import { FoodTable, FoodGroup, FoodData } from "../../../utils/data";
+import { FoodGroup, FoodGroupServer, FoodTableServer } from "../../../utils/data";
+import { FoodData, FoodTable } from '../../../utils/calc';
 import { useState } from 'react';
 import BreadcrumbsList, { BreadcrumbsElement } from '../../../components/breadcrumbslist';
 import { BreadcrumbsID } from '../[id]';
@@ -16,10 +17,10 @@ import { useGastric } from '../../../utils/gastric';
 type Props = InferGetStaticPropsType<typeof getStaticProps>;
 
 export const getStaticPaths = async () => {
-  const paths = FoodTable.getAllList();
+  const paths = FoodTableServer.getAllList();
   let ids: any[]=[];
   paths.forEach((v:string) => {
-    const tables = FoodTable.getList(v);
+    const tables = FoodTableServer.getList(v);
     tables.forEach((t:string) => {
       ids.push({params:{group:v.substring(0,2), id:v.substring(2), slug:t}});
     });
@@ -35,15 +36,15 @@ export const getStaticPaths = async () => {
 export const getStaticProps = async ({params}: GetStaticPropsContext) => {
   if(params == undefined){
     return {props:{data:{}, unit:{}, name:"", id:"", amino_acid_score:{}, required:{}, groupname:"", table:"", tableList:[]}};
-  }FoodData
-  const info =  FoodGroup.fromGroup(params.group as string);
+  }
+  const info =  FoodGroupServer.fromGroup(params.group as string);
   const groupname =info.name;
   const id = `${params.group}${params.id}`;
   const name = info.data[id].name;
-  const data = FoodTable.get(`${params.group}${params.id}`, `${params.slug}`) as FoodTable;
-  const unit = FoodTable.get("unit", `${params.slug}`) as FoodTable;
+  const data = FoodTableServer.get(`${params.group}${params.id}`, `${params.slug}`) as FoodTable;
+  const unit = FoodTableServer.get("unit", `${params.slug}`) as FoodTable;
   const amino_acid_score:Record<string, FoodTable>={};
-  const tableList = FoodTable.getList(`${params.group}${params.id}`);
+  const tableList = FoodTableServer.getList(`${params.group}${params.id}`);
   let required = {};
   if(required_nutrients.data[params.slug as string]){
     required = required_nutrients.data[params.slug as string];
@@ -96,7 +97,7 @@ const FoodTablePage: NextPage<Props> = (props: Props) => {
     <BreadcrumbsList list={BreadcrumbsTable(props.groupname, props.id, props.name)}/>
     <div className='flex'>
       <FoodContentsSetter contents={gram} setContents={setGram} />
-      <button className='grow-0 w-10 h-10 rounded bg-gray-300 block my-auto' 
+      <button className='grow-0 w-10 h-10 rounded bg-gray-300 hover:bg-gray-200 block my-auto' 
         onClick={() => {gastric.addFood({id:props.id, name:props.name, contents:gram})}}>+</button>
     </div>
     <TabLinkList 

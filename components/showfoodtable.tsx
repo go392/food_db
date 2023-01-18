@@ -1,4 +1,4 @@
-import { FoodTable, FoodValue } from "../utils/data";
+import { FoodTable, FoodValue } from "../utils/calc";
 
 function getValueString(gram:number|undefined, prop:FoodValue, req?:FoodValue, unit?:FoodValue) : string{
     let unitstring = !unit || unit.raw == "" ? "" : " " + unit.raw;

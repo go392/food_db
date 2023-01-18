@@ -2,15 +2,15 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import foodGroupList from '../../jsondata/search.json'
 
 type FoodList = {
-    name: string,
-    id: string,
-  }
-  
-  type FoodListSearchResponse = {
-    data?:FoodList[],
-    status: string,
-    message?: string,
-  };
+  name: string,
+  id: string,
+}
+
+type FoodListSearchResponse = {
+  data?:FoodList[],
+  status: string,
+  message?: string,
+};
 
 function searchData(query:string) : FoodListSearchResponse{
     if(query == "") return {status:"success", data:[]}

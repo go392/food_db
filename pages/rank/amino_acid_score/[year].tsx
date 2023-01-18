@@ -6,7 +6,7 @@ import BreadcrumbsList, { BreadcrumbsElement } from '../../../components/breadcr
 import TabLinkList from '../../../components/tablinklist';
 import { calcAminoAcidScore } from '../../../constants/amino_acid';
 import FOODDB from '../../../jsondata/fooddb.json'
-import { FoodData, FoodTable } from '../../../utils/data';
+import { FoodData } from '../../../utils/calc';
 
 export type Props = {
     data:FoodData[];

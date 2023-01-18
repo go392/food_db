@@ -3,7 +3,7 @@ import { GetStaticProps, GetStaticPropsContext, NextPage } from 'next';
 import Link from 'next/link';
 import BreadcrumbsList , { BreadcrumbsElement } from '../components/breadcrumbslist';
 import SearchBar from '../components/searchbar';
-import { FoodGroup } from '../utils/data';
+import { FoodGroup, FoodGroupServer } from '../utils/data';
 
 export type RankingInfo = {key:[string, string], name:string, reverse?:boolean};
 export const RankingList: Record<string, RankingInfo> ={
@@ -25,7 +25,7 @@ type Props = {
 }
 
 export const getStaticProps: GetStaticProps<Props> =  async (context : GetStaticPropsContext) =>{
-  const group:GroupIndex[] = FoodGroup.getList().map((v:string):GroupIndex => { return {id:v, name:FoodGroup.fromGroup(v).name} });
+  const group:GroupIndex[] = FoodGroupServer.getList().map((v:string):GroupIndex => { return {id:v, name:FoodGroupServer.fromGroup(v).name} });
 
   const links: Array<[string, string]> = Object.entries(RankingList).map(([k, v]) => [k, v.name]);
   links.push(["amino_acid_score","アミノ酸スコア"]);

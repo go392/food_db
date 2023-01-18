@@ -1,15 +1,15 @@
 import { InferGetStaticPropsType, GetStaticPropsContext, NextPage } from 'next'
-import { FoodTable,  FoodData, FoodGroup } from "../../utils/data";
-import { table_name } from "../../data/table";
+import { FoodData, FoodTable } from '../../utils/calc';
 import { BreadcrumbsGroup } from '../[group]';
 import { BreadcrumbsElement } from '../../components/breadcrumbslist';
 import * as FoodTablePage from './[id]/[slug]';
+import { FoodTableServer } from '../../utils/data';
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>;
 
 
 export const getStaticPaths = async () => { 
-  let paths: string[]=FoodTable.getAllList();
+  let paths: string[]=FoodTableServer.getAllList();
   let  ids = paths.map((value:string) => { return {params:{group:value.substring(0,2), id:value.substring(2)}}});
   return { 
     paths:ids, 
@@ -21,7 +21,7 @@ export const getStaticProps = async ({params}: GetStaticPropsContext) => {
   if(params == undefined){
     return FoodTablePage.getStaticProps({ params });
   }
-  let table = FoodTable.getList(`${params.group}${params.id}`)[0];
+  let table = FoodTableServer.getList(`${params.group}${params.id}`)[0];
   return FoodTablePage.getStaticProps({ params:{ group:params.group, id:params.id, slug:table} });
 }
 
