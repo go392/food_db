@@ -2,6 +2,7 @@
 import { GetStaticProps, GetStaticPropsContext, NextPage } from 'next';
 import Link from 'next/link';
 import BreadcrumbsList , { BreadcrumbsElement } from '../components/breadcrumbslist';
+import Header from '../components/header';
 import SearchBar from '../components/searchbar';
 import { FoodGroup, FoodGroupServer } from '../utils/data';
 
@@ -42,8 +43,7 @@ export const BreadcrumbsHome = () : BreadcrumbsElement[] =>{
 
 const Home: NextPage<Props> = (props: Props) => {
   return <div className='max-w-lg m-auto'>
-    <SearchBar />
-    <h1 className='text-2xl font-bold px-2 py-2'>食品データベース</h1>
+    <Header />
     <BreadcrumbsList list={BreadcrumbsHome()} />
     {props.group.map((o) => <Link href={o.id} key={o.name} className='block w-full border border-glay-100 px-2 py-2'>{o.name}</Link>)}
     <h2 className='text-2xl font-bold px-2 py-2'>ランキング</h2>

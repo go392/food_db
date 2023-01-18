@@ -10,6 +10,7 @@ import { useGastric } from '../utils/gastric';
 import { GetDBResponse } from './api/getdb';
 import unit from '../jsondata/unit.json'
 import { required_nutrients } from '../constants/required'
+import Header from '../components/header';
 
 type Props = {
   unit: Record<string, FoodTable>,
@@ -73,14 +74,13 @@ const Gastric: NextPage<Props> = (props: Props) => {
         data = {...ret, ...data};
       }
     }).finally(()=>{calcData();}));
-    
   }
 
   useEffect(fetchData, [gastric.gastric]);
 
   return <div className='max-w-lg m-auto'>
-      <SearchBar />
-      <h1 className='text-2xl font-bold px-2 py-2'>胃の中</h1>
+      <Header />
+      <h2 className='text-xl font-bold px-2 py-2'>胃の中</h2>
       <table className="table-auto border-collapse border w-full">
         <thead>
           <tr>

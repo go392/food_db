@@ -3,6 +3,7 @@ import { GetStaticPaths, GetStaticPathsContext, GetStaticProps, GetStaticPropsCo
 import Link from 'next/link';
 import { BreadcrumbsHome, RankingInfo, RankingList } from '..';
 import BreadcrumbsList, { BreadcrumbsElement } from '../../components/breadcrumbslist';
+import Header from '../../components/header';
 import FOODDB from '../../jsondata/fooddb.json'
 import { FoodData, FoodTable } from '../../utils/calc';
 import { FoodTableServer } from '../../utils/data';
@@ -52,7 +53,8 @@ export function BreadcrumbsRank(info:[string,RankingInfo]):BreadcrumbsElement[]{
 
 const Rank: NextPage<Props> = (props: Props) => {
   return <div className='max-w-lg m-auto'>
-    <h1 className='text-2xl font-bold'>{props.info[1].name}の{props.info[1].reverse ? "多い": "少ない"}食品</h1>
+    <Header />
+    <h2 className='text-xl font-bold'>{props.info[1].name}の{props.info[1].reverse ? "多い": "少ない"}食品</h2>
     <BreadcrumbsList list={BreadcrumbsRank( props.info )} />
     <table className="text-sm table-auto border-collapse border w-full">
         <tbody>{

@@ -5,6 +5,7 @@ import { BreadcrumbsHome } from "./index";
 import { FoodGroup, FoodGroupServer } from '../utils/data';
 import FoodGroupList from '../components/foodgrouplist';
 import SearchBar from '../components/searchbar';
+import Header from '../components/header';
 
 type Props = {
     group:FoodGroup
@@ -35,8 +36,8 @@ export const BreadcrumbsGroup = (id: string, name:string) : BreadcrumbsElement[]
 
 const Group: NextPage<Props> = (props: Props) => {
   return <div className='max-w-lg m-auto'>
-     <SearchBar />
-    <h1 className='text-2xl font-bold'>{props.group.name}</h1>
+    <Header />
+    <h2 className='text-xl font-bold'>{props.group.name}</h2>
     <BreadcrumbsList list={BreadcrumbsGroup(props.group.id, props.group.name)} />
     <FoodGroupList foodGroup={props.group} />
   </div>;

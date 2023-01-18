@@ -13,6 +13,7 @@ import TabLinkList from '../../../components/tablinklist';
 import { table_name } from '../../../data/table';
 import Link from 'next/link';
 import { useGastric } from '../../../utils/gastric';
+import Header from '../../../components/header';
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>;
 
@@ -92,8 +93,8 @@ const FoodTablePage: NextPage<Props> = (props: Props) => {
   const [gram, setGram] = useState(100);
 
   return <div className="max-w-lg m-auto">
-    <SearchBar/>
-    <h1 className='text-2xl font-bold py-2'>{props.name}</h1>
+    <Header />
+    <h2 className='text-xl font-bold py-2'>{props.name}</h2>
     <BreadcrumbsList list={BreadcrumbsTable(props.groupname, props.id, props.name)}/>
     <div className='flex'>
       <FoodContentsSetter contents={gram} setContents={setGram} />

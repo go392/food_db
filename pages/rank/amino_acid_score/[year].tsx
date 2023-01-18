@@ -3,6 +3,7 @@ import { GetStaticPaths, GetStaticPathsContext, GetStaticProps, GetStaticPropsCo
 import Link from 'next/link';
 import { BreadcrumbsHome } from '../..';
 import BreadcrumbsList, { BreadcrumbsElement } from '../../../components/breadcrumbslist';
+import Header from '../../../components/header';
 import TabLinkList from '../../../components/tablinklist';
 import { calcAminoAcidScore } from '../../../constants/amino_acid';
 import FOODDB from '../../../jsondata/fooddb.json'
@@ -43,7 +44,8 @@ export function BreadcrumbsAminoAcidScore(year:string):BreadcrumbsElement[]{
 
 const AminoAcidScorePage: NextPage<Props> = (props: Props) => {
   return <div className='max-w-lg m-auto'>
-    <h1 className='text-2xl font-bold'>アミノ酸スコアの大きい食品({props.year})</h1>
+    <Header />
+    <h2 className='text-xl font-bold'>アミノ酸スコアの大きい食品({props.year})</h2>
     <BreadcrumbsList list={BreadcrumbsAminoAcidScore(props.year)} />
     <TabLinkList 
       tabList={props.yearList.map((v)=> { return { name:v, href:`/rank/amino_acid_score/${v}`, show:`${v}` } })}

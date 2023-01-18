@@ -35,7 +35,10 @@ export default function Search(props: Props) {
   }
 
   return <div className='max-w-lg m-auto'>
-    <h1 className='text-2xl font-bold'>食品データベース</h1>
+    <div className="flex justify-between">
+      <h1 className='text-2xl font-bold px-2 py-2'><Link href={"/"}>食品データベース</Link></h1>
+      <Link href="/gastric">胃の中</Link>
+    </div>
     <div className='flex justify-center my-2'>
     <input onChange={(event) => {setSearchText(event.target.value);}} className="bg-gray-50 border border-gray-300 text-gray-900 flex-1 px-2 py-2" type={"search"}/>
     <button onClick={search} className="bg-gray-500 hover:bg-gray-400 text-white rounded flex-2 px-2 py-2">検索</button>
