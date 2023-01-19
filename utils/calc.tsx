@@ -297,10 +297,9 @@ export namespace FoodData{
             }
         } else {
           for(let j in fd.data){
-            if(!fd2.data[j]) continue;
             d.data[j] = {};
             for(let k in fd.data[j]){
-              if(!fd2.data[j][k]) {
+              if(!fd2.data[j] || !fd2.data[j][k]) {
                 d.data[j][k] = {...fd.data[j][k]};
                 continue;
               }

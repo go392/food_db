@@ -11,6 +11,7 @@ import { GetDBResponse } from './api/getdb';
 import unit from '../jsondata/unit.json'
 import { required_nutrients } from '../constants/required'
 import Header from '../components/header';
+import ChangeGastricButton from '../components/changegastricbutton';
 
 type Props = {
   unit: Record<string, FoodTable>,
@@ -102,7 +103,7 @@ const Gastric: NextPage<Props> = (props: Props) => {
             <th className='border bg-gray-100'><Link className='block w-full py-2' href={`${v.id.substring(0,2)}/${v.id.substring(2)}`}>{v.name}</Link></th>
             <td className='border px-2 py-2 flex'>
               <input className='w-full py-2 inline-block' type="number" value={v.contents} onChange={(e)=>{ v.contents = parseFloat(e.target.value); gastric.setFood(v);}}></input>
-              <button className='w-10 h-10 rounded bg-gray-300 inline-block' onClick={async ()=>{gastric.removeFood(v); }}>-</button>
+              <ChangeGastricButton info={v} addFood={gastric.removeFood} type="remove" />
             </td>
           </tr> )
         }</tbody>

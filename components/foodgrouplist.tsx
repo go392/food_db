@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { FoodGroup, FoodIndex } from "../utils/data";
 import { useGastric } from "../utils/gastric";
+import ChangeGastricButton from "./changegastricbutton";
 
 
 export default function FoodGroupList({foodGroup} : { foodGroup:FoodGroup }){
@@ -12,8 +13,7 @@ export default function FoodGroupList({foodGroup} : { foodGroup:FoodGroup }){
         href={`${key.substring(0,2)}/${key.substring(2)}`}>{
         value.name
       }</Link>
-      <button className='grow-0 w-10 h-10 rounded bg-gray-300 hover:bg-gray-200 block my-auto' 
-        onClick={() => {gastric.addFood({id:key, name:value.name, contents:100})}}>+</button>
+      <ChangeGastricButton info={{id:key, name:value.name, contents:100}} addFood={gastric.addFood} type="add" />
       </div>)
     }</div>
 }

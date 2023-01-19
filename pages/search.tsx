@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { FoodGroup } from '../utils/data';
 import { GetServerSideProps, GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import { useGastric } from '../utils/gastric';
+import ChangeGastricButton from '../components/changegastricbutton';
 
 type Props = {
   q: string
@@ -52,8 +53,7 @@ export default function Search(props: Props) {
         href={`${f.id.substring(0,2)}/${f.id.substring(2)}`}>{
           f.name
       }</Link>
-      <button className='grow-0 w-10 h-10 rounded bg-gray-300 hover:bg-gray-200block my-auto' 
-        onClick={() => {gastric.addFood({id:f.id, name:f.name, contents:100})}}>+</button>
+      <ChangeGastricButton info={{id:f.id, name:f.name, contents:100}} addFood={gastric.addFood} type="add" />
       </div>)
     }</div>
   </div>;

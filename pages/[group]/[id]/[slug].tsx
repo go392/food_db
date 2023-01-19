@@ -14,6 +14,7 @@ import { table_name } from '../../../data/table';
 import Link from 'next/link';
 import { useGastric } from '../../../utils/gastric';
 import Header from '../../../components/header';
+import ChangeGastricButton from '../../../components/changegastricbutton';
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>;
 
@@ -98,8 +99,7 @@ const FoodTablePage: NextPage<Props> = (props: Props) => {
     <BreadcrumbsList list={BreadcrumbsTable(props.groupname, props.id, props.name)}/>
     <div className='flex'>
       <FoodContentsSetter contents={gram} setContents={setGram} />
-      <button className='grow-0 w-10 h-10 rounded bg-gray-300 hover:bg-gray-200 block my-auto' 
-        onClick={() => {gastric.addFood({id:props.id, name:props.name, contents:gram})}}>+</button>
+      <ChangeGastricButton info={{id:props.id, name:props.name, contents:gram}} addFood={gastric.addFood} type="add" />
     </div>
     <TabLinkList 
       tabList={props.tableList.map((v)=>{
