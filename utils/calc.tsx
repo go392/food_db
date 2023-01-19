@@ -288,7 +288,10 @@ export namespace FoodData{
             for(let j in fd.data){
               d.data[j] = {};
               for(let k in fd.data[j]){
-                if(fd.data[j][k].number == undefined) continue;
+                if(fd.data[j][k].number == undefined) {
+                  d.data[j][k] = {...fd.data[j][k]};
+                  continue;
+                }
                 d.data[j][k]=  func(fd.data[j][k], num);
               }
             }
@@ -297,8 +300,19 @@ export namespace FoodData{
             if(!fd2.data[j]) continue;
             d.data[j] = {};
             for(let k in fd.data[j]){
-              if(!fd2.data[j][k]) continue;
+              if(!fd2.data[j][k]) {
+                d.data[j][k] = {...fd.data[j][k]};
+                continue;
+              }
               d.data[j][k]=  func(fd.data[j][k], fd2.data[j][k]);
+            }
+          }
+          for(let j in fd2.data){
+            if(!d.data[j]) d.data[j] = {};
+            for(let k in fd2.data[j]){
+              if(!fd.data[j] || !fd.data[j][k]) {
+                d.data[j][k] = func(FoodValue.fromNumber(0), fd2.data[j][k]);
+              }
             }
           }
         }

@@ -13,7 +13,10 @@ function getValueString(gram:number|undefined, prop:FoodValue, req?:FoodValue, u
       if(prop.number == undefined){
         return prop.raw + unitstring;
       } else {
-        return prop.number.toFixed(2).toString() + unitstring;
+        if(!isNaN(prop.number) &&req && req.number != undefined && !isNaN(req.number)){
+          reqstr = ` (${(prop.number*100/req.number).toFixed(2)} %)`;
+        }
+        return prop.number.toFixed(2).toString() + unitstring + reqstr;
       }
     }
     if(prop.number==undefined || isNaN(prop.number)) {
