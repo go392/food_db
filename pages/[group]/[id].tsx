@@ -1,9 +1,9 @@
 import { InferGetStaticPropsType, GetStaticPropsContext, NextPage } from 'next'
 import { FoodData, FoodTable } from '../../utils/calc';
 import { BreadcrumbsGroup } from '../[group]';
-import { BreadcrumbsElement } from '../../components/breadcrumbslist';
 import * as FoodTablePage from './[id]/[slug]';
 import { FoodTableServer } from '../../utils/data';
+import Link from 'next/link';
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>;
 
@@ -25,8 +25,8 @@ export const getStaticProps = async ({params}: GetStaticPropsContext) => {
   return FoodTablePage.getStaticProps({ params:{ group:params.group, id:params.id, slug:table} });
 }
 
-export const BreadcrumbsID= (groupname:string, id:string, foodname:string): BreadcrumbsElement[] =>{
-  return [...BreadcrumbsGroup(id.substring(0,2), groupname), {href:`/${id.substring(0,2)}/${id.substring(2)}`, show:foodname}];
+export const BreadcrumbsID= (id:string, foodname:string) =>{
+  return <Link href={`/${id.substring(0,2)}/${id.substring(2)}`}>{foodname}</Link>
 }
 
 const Page: NextPage<Props> = (props : Props) => {

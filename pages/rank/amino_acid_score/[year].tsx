@@ -1,9 +1,10 @@
 
+import { Breadcrumbs } from '@mui/material';
 import { GetStaticPaths, GetStaticPathsContext, GetStaticProps, GetStaticPropsContext, NextPage } from 'next';
 import Link from 'next/link';
 import { BreadcrumbsHome } from '../..';
-import BreadcrumbsList, { BreadcrumbsElement } from '../../../components/breadcrumbslist';
 import Header from '../../../components/header';
+import SearchBar from '../../../components/searchbar';
 import TabLinkList from '../../../components/tablinklist';
 import { calcAminoAcidScore } from '../../../constants/amino_acid';
 import FOODDB from '../../../jsondata/fooddb.json'
@@ -38,15 +39,19 @@ export const getStaticProps: GetStaticProps<Props> =  async (context : GetStatic
   }};
 }
 
-export function BreadcrumbsAminoAcidScore(year:string):BreadcrumbsElement[]{
-  return [ ...BreadcrumbsHome(), {show:"アミノ酸スコアの大きい食品", href:`/rank/amino_acid_score/${year}`  },  ];
+export function BreadcrumbsAminoAcidScore(year:string){
+  return <Link href={`rank/amino_acid_score/${year}`}>アミノ酸スコアの大きい食品({year})</Link>
 }
 
 const AminoAcidScorePage: NextPage<Props> = (props: Props) => {
   return <div className='max-w-lg m-auto'>
+    <SearchBar />
     <Header />
     <h2 className='text-xl font-bold'>アミノ酸スコアの大きい食品({props.year})</h2>
-    <BreadcrumbsList list={BreadcrumbsAminoAcidScore(props.year)} />
+    <Breadcrumbs>{[
+      BreadcrumbsHome(),
+      BreadcrumbsAminoAcidScore(props.year),
+    ]}</Breadcrumbs>
     <TabLinkList 
       tabList={props.yearList.map((v)=> { return { name:v, href:`/rank/amino_acid_score/${v}`, show:`${v}` } })}
       current={props.year}

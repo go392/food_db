@@ -2,12 +2,10 @@ import { InferGetStaticPropsType, GetStaticPropsContext,NextPage } from 'next'
 import { FoodGroup, FoodGroupServer, FoodTableServer } from "../../../utils/data";
 import { FoodData, FoodTable } from '../../../utils/calc';
 import { useState } from 'react';
-import BreadcrumbsList, { BreadcrumbsElement } from '../../../components/breadcrumbslist';
 import { BreadcrumbsID } from '../[id]';
 import { calcAminoAcidScore } from '../../../constants/amino_acid';
 import ShowFoodTable from '../../../components/showfoodtable';
 import FoodContentsSetter from '../../../components/foodcontentssetter';
-import SearchBar from '../../../components/searchbar';
 import { required_nutrients } from '../../../constants/required';
 import TabLinkList from '../../../components/tablinklist';
 import { table_name } from '../../../data/table';
@@ -15,6 +13,10 @@ import Link from 'next/link';
 import { useGastric } from '../../../utils/gastric';
 import Header from '../../../components/header';
 import ChangeGastricButton from '../../../components/changegastricbutton';
+import { Breadcrumbs } from '@mui/material';
+import { BreadcrumbsHome } from '../..';
+import { BreadcrumbsGroup } from '../../[group]';
+import SearchBar from '../../../components/searchbar';
 
 type Props = InferGetStaticPropsType<typeof getStaticProps>;
 
@@ -85,18 +87,19 @@ export const getStaticProps = async ({params}: GetStaticPropsContext) => {
   }
 }
 
-export const BreadcrumbsTable = (groupname:string, id:string, foodname:string): BreadcrumbsElement[] =>{
-  return BreadcrumbsID(groupname, id, foodname);
-}
-
 const FoodTablePage: NextPage<Props> = (props: Props) => {
   const gastric = useGastric();
   const [gram, setGram] = useState(100);
 
   return <div className="max-w-lg m-auto">
+    <SearchBar />
     <Header />
     <h2 className='text-xl font-bold py-2'>{props.name}</h2>
-    <BreadcrumbsList list={BreadcrumbsTable(props.groupname, props.id, props.name)}/>
+    <Breadcrumbs>{[
+      BreadcrumbsHome(),
+      BreadcrumbsGroup(props.id.substring(0,2), props.groupname),
+      BreadcrumbsID(props.id, props.name),
+    ]}</Breadcrumbs>
     <div className='flex'>
       <FoodContentsSetter contents={gram} setContents={setGram} />
       <ChangeGastricButton info={{id:props.id, name:props.name, contents:gram}} addFood={gastric.addFood} type="add" />

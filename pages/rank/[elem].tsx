@@ -1,9 +1,10 @@
 
+import { Breadcrumbs } from '@mui/material';
 import { GetStaticPaths, GetStaticPathsContext, GetStaticProps, GetStaticPropsContext, NextPage } from 'next';
 import Link from 'next/link';
 import { BreadcrumbsHome, RankingInfo, RankingList } from '..';
-import BreadcrumbsList, { BreadcrumbsElement } from '../../components/breadcrumbslist';
 import Header from '../../components/header';
+import SearchBar from '../../components/searchbar';
 import FOODDB from '../../jsondata/fooddb.json'
 import { FoodData, FoodTable } from '../../utils/calc';
 import { FoodTableServer } from '../../utils/data';
@@ -47,15 +48,19 @@ export const getStaticProps: GetStaticProps<Props> =  async (context : GetStatic
   }};
 }
 
-export function BreadcrumbsRank(info:[string,RankingInfo]):BreadcrumbsElement[]{
-  return [ ...BreadcrumbsHome(), {show:`${info[1].name}の${info[1].reverse ? "多い": "少ない"}食品`, href:info[0]  },  ];
+export function BreadcrumbsRank(info:[string,RankingInfo]){
+  return <Link href={info[0]}>{`${info[1].name}の${info[1].reverse ? "多い": "少ない"}食品`}</Link>
 }
 
 const Rank: NextPage<Props> = (props: Props) => {
   return <div className='max-w-lg m-auto'>
+    <SearchBar />
     <Header />
     <h2 className='text-xl font-bold'>{props.info[1].name}の{props.info[1].reverse ? "多い": "少ない"}食品</h2>
-    <BreadcrumbsList list={BreadcrumbsRank( props.info )} />
+    <Breadcrumbs>{[
+      BreadcrumbsHome(),
+      BreadcrumbsRank(props.info),
+    ]}</Breadcrumbs>
     <table className="text-sm table-auto border-collapse border w-full">
         <tbody>{
         props.data.map((v, i) => <tr key={i}>

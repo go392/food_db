@@ -1,11 +1,12 @@
 
 import { GetStaticPathsContext, GetStaticPaths, GetStaticProps, GetStaticPropsContext, NextPage } from 'next';
-import BreadcrumbsList, {BreadcrumbsElement} from '../components/breadcrumbslist';
 import { BreadcrumbsHome } from "./index";
 import { FoodGroup, FoodGroupServer } from '../utils/data';
 import FoodGroupList from '../components/foodgrouplist';
-import SearchBar from '../components/searchbar';
 import Header from '../components/header';
+import Link from 'next/link';
+import { Breadcrumbs } from '@mui/material';
+import SearchBar from '../components/searchbar';
 
 type Props = {
     group:FoodGroup
@@ -30,15 +31,19 @@ export const getStaticProps: GetStaticProps<Props> =  async ({params} : GetStati
   };
 }
 
-export const BreadcrumbsGroup = (id: string, name:string) : BreadcrumbsElement[] =>{
-  return [...BreadcrumbsHome(), {href:`/${id}`, show:name}];
+export const BreadcrumbsGroup = (id: string, name:string) =>{
+  return <Link href={`/${id}`}>{name}</Link>
 }
 
 const Group: NextPage<Props> = (props: Props) => {
   return <div className='max-w-lg m-auto'>
+    <SearchBar />
     <Header />
     <h2 className='text-xl font-bold'>{props.group.name}</h2>
-    <BreadcrumbsList list={BreadcrumbsGroup(props.group.id, props.group.name)} />
+    <Breadcrumbs> {[
+      BreadcrumbsHome(),
+      BreadcrumbsGroup(props.group.id, props.group.name)
+      ]} </Breadcrumbs>
     <FoodGroupList foodGroup={props.group} />
   </div>;
 }
