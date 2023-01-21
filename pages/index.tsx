@@ -43,7 +43,6 @@ export const BreadcrumbsHome = () =>{
 
 const Home: NextPage<Props> = (props: Props) => {
   return <div className='max-w-lg m-auto'>
-    <SearchBar />
     <Header />
     <Breadcrumbs>{BreadcrumbsHome()}</Breadcrumbs>
     {props.group.map((o) => <Link href={o.id} key={o.name} className='block w-full border border-glay-100 px-2 py-2'>{o.name}</Link>)}

@@ -92,7 +92,6 @@ const FoodTablePage: NextPage<Props> = (props: Props) => {
   const [gram, setGram] = useState(100);
 
   return <div className="max-w-lg m-auto">
-    <SearchBar />
     <Header />
     <h2 className='text-xl font-bold py-2'>{props.name}</h2>
     <Breadcrumbs>{[

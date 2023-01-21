@@ -37,7 +37,6 @@ export const BreadcrumbsGroup = (id: string, name:string) =>{
 
 const Group: NextPage<Props> = (props: Props) => {
   return <div className='max-w-lg m-auto'>
-    <SearchBar />
     <Header />
     <h2 className='text-xl font-bold'>{props.group.name}</h2>
     <Breadcrumbs> {[

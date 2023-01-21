@@ -45,7 +45,6 @@ export function BreadcrumbsAminoAcidScore(year:string){
 
 const AminoAcidScorePage: NextPage<Props> = (props: Props) => {
   return <div className='max-w-lg m-auto'>
-    <SearchBar />
     <Header />
     <h2 className='text-xl font-bold'>アミノ酸スコアの大きい食品({props.year})</h2>
     <Breadcrumbs>{[

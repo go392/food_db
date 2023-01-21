@@ -54,7 +54,6 @@ export function BreadcrumbsRank(info:[string,RankingInfo]){
 
 const Rank: NextPage<Props> = (props: Props) => {
   return <div className='max-w-lg m-auto'>
-    <SearchBar />
     <Header />
     <h2 className='text-xl font-bold'>{props.info[1].name}の{props.info[1].reverse ? "多い": "少ない"}食品</h2>
     <Breadcrumbs>{[

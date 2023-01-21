@@ -85,7 +85,6 @@ const Gastric: NextPage<Props> = (props: Props) => {
   useEffect(fetchData, [gastric.gastric]);
 
   return <div className='max-w-lg m-auto'>
-    <SearchBar />
     <Header />
     <h2 className='text-xl font-bold px-2 py-2'>胃の中</h2>
     <table className="table-auto border-collapse border w-full">

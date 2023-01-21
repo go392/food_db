@@ -1,12 +1,20 @@
 import Link from "next/link";
 import SearchBar from "./searchbar";
 import FoodBankIcon from '@mui/icons-material/FoodBank';
+import { Box, Toolbar, Typography } from "@mui/material";
 
-export default function Header({}){
-  return <>
-    <div className="flex justify-between">
-      <h1 className='text-2xl font-bold px-2 py-2'><Link href={"/"}>食品データベース</Link></h1>
-      <Link href="/gastric"><FoodBankIcon /></Link>
-    </div>
-  </>
+export default function Header({hideSearchBar} : {hideSearchBar?:boolean}){
+  return <Toolbar>
+      <Typography
+            variant="h5"
+            noWrap
+            component="div"
+            sx={{ flexGrow: 1 }}>
+        <Link href={"/"}>FoodDB</Link>
+      </Typography>
+      {hideSearchBar ?  <></> : <SearchBar/>}
+      <Box>
+        <Link href="/gastric"><FoodBankIcon fontSize="large"/></Link>
+      </Box>
+  </Toolbar>
 }
