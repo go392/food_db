@@ -1,4 +1,6 @@
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { table_name } from "../data/table";
 
 export type TabInfo = {
@@ -8,11 +10,15 @@ export type TabInfo = {
 }
 
 export default function TabLinkList({tabList, current}: {tabList:TabInfo[], current:string}){
-    return <div className={`flex flex-wrap gap-1 my-1 w-full`}>{
-      tabList.map((e, i)=>{
-        const classname = 'px-2 text-sm inline-block rounded py-2 text-center' + (e.name == current ? " text-white bg-gray-500": " bg-gray-300 hover:bg-gray-200");
-        const href = e.href;
-        return <Link key={i} className={classname} href={href}>{e.show}</Link>;})
-      }
-    </div>
+  const router = useRouter();
+  return <ToggleButtonGroup 
+    color="primary"
+    value={current}
+    exclusive
+  aria-label="Platform"
+  >{
+    tabList.map((e, i)=>{
+      return <ToggleButton onClick={()=>router.push(e.href)} key={i} value={e.name}>{e.show}</ToggleButton>;})
+    }
+  </ToggleButtonGroup>
 }

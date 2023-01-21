@@ -1,15 +1,17 @@
 import { Alert, Snackbar } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
 import { useState } from "react"
 import { FoodInfo } from "../utils/gastric"
-
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 
 export default function ChangeGastricButton({info, addFood, type}: {info:FoodInfo, addFood:(f:FoodInfo)=>void, type:"add"|"remove"}){
   const [open, setOpen] = useState(false);
   const onClose = ()=> setOpen(false);
 
   return<>
-    <button className='grow-0 w-10 h-10 rounded bg-gray-300 hover:bg-gray-200 block my-auto' 
-    onClick={() => {addFood(info); setOpen(true);}}>{type == "add" ? "+" : "-"}</button>
+    <IconButton
+      onClick={() => {addFood(info); setOpen(true);}}>{type == "add" ? <AddIcon/> : <RemoveIcon/> }</IconButton>
     <Snackbar 
       open={open}
       autoHideDuration={3000}
