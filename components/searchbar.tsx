@@ -14,13 +14,9 @@ const Search = styled('div')(({ theme }) => ({
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
   marginLeft: 0,
-  paddingLeft: "10px",
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(1),
-    width: 'auto',
-  },
+  width: "100%",
 }));
+
 
 export default function SearchBar({}){
     const [searchText, setSearchText] = useState("");
@@ -31,6 +27,7 @@ export default function SearchBar({}){
 
     return <Search>
       <Input disableUnderline placeholder="Search..." 
+        style={{paddingLeft:"0.5em", flexGrow:"1"}}
         inputProps={{ 'aria-label': 'search' }}
         onChange={(event) => {setSearchText(event.target.value);}} 
         onKeyDown={(event) => { if(document.activeElement == event.target && event.key == "Enter" && searchText) search(); }} 

@@ -5,7 +5,7 @@ import { GetServerSidePropsContext, GetServerSidePropsResult } from 'next';
 import { useGastric } from '../utils/gastric';
 import ChangeGastricButton from '../components/changegastricbutton';
 import Header from '../components/header';
-import { alpha,  IconButton, Input, styled, TextField } from '@mui/material';
+import { alpha,  IconButton, Input, styled, TextField, Toolbar } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
 type Props = {
@@ -31,10 +31,6 @@ const SearchDiv = styled('div')(({ theme }) => ({
   marginLeft: 0,
   paddingLeft: "0.5em",
   width: '100%',
-  [theme.breakpoints.up('sm')]: {
-    marginLeft: theme.spacing(1),
-    width: 'auto',
-  },
 }));
 
 
@@ -62,6 +58,7 @@ export default function Search(props: Props) {
 
   return <div className='max-w-lg m-auto'>
     <Header hideSearchBar={true}/>
+    <Toolbar>
     <SearchDiv>
       <Input disableUnderline placeholder="Search..."
         style={{flexGrow:1}}
@@ -70,6 +67,7 @@ export default function Search(props: Props) {
         onChange={(event) => {setSearchText(event.target.value);}} />
       <IconButton  component="label" onClick={search}><SearchIcon/></IconButton>
     </SearchDiv>
+    </Toolbar>
     {searchResult.length ? <p className='text-xs py-2 text-gray-500'>{searchResult.length}件の検索結果</p> : <></>}
     <div>{
       searchResult.map((f:any)=>
